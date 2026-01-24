@@ -93,6 +93,10 @@ impl ContentStore {
     /// Get the file path for an artifact
     fn artifact_path(&self, hash: &ContentHash) -> PathBuf {
         let hex = hash.as_hex();
+        // Ensure hash is long enough
+        if hex.len() < 2 {
+            panic!("Hash too short: {}", hex);
+        }
         // Use first 2 characters as subdirectory for better filesystem performance
         let prefix = &hex[..2];
         self.root.join(prefix).join(format!("{}.json", hex))

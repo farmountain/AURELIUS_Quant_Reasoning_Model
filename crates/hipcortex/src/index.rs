@@ -116,45 +116,53 @@ impl MetadataIndex {
         );
 
         let mut conditions = Vec::new();
-        let mut joins = Vec::new();
+        let mut params_vec: Vec<Box<dyn rusqlite::ToSql>> = Vec::new();
+        let mut param_idx = 1;
 
         if query.regime_tags.is_some() {
-            joins.push("LEFT JOIN regime_tags rt ON a.hash = rt.hash");
+            sql.push_str(" LEFT JOIN regime_tags rt ON a.hash = rt.hash");
         }
 
         if let Some(artifact_type) = &query.artifact_type {
-            conditions.push(format!("a.artifact_type = '{}'", artifact_type));
+            conditions.push(format!("a.artifact_type = ?{}", param_idx));
+            params_vec.push(Box::new(artifact_type.clone()));
+            param_idx += 1;
         }
 
         if let Some(goal) = &query.goal {
-            conditions.push(format!("a.goal = '{}'", goal));
+            conditions.push(format!("a.goal = ?{}", param_idx));
+            params_vec.push(Box::new(goal.clone()));
+            param_idx += 1;
         }
 
         if let Some(policy) = &query.policy {
-            conditions.push(format!("a.policy = '{}'", policy));
+            conditions.push(format!("a.policy = ?{}", param_idx));
+            params_vec.push(Box::new(policy.clone()));
+            param_idx += 1;
         }
 
         if let Some(start) = query.timestamp_start {
-            conditions.push(format!("a.timestamp >= {}", start));
+            conditions.push(format!("a.timestamp >= ?{}", param_idx));
+            params_vec.push(Box::new(start));
+            param_idx += 1;
         }
 
         if let Some(end) = query.timestamp_end {
-            conditions.push(format!("a.timestamp <= {}", end));
+            conditions.push(format!("a.timestamp <= ?{}", param_idx));
+            params_vec.push(Box::new(end));
+            param_idx += 1;
         }
 
         if let Some(tags) = &query.regime_tags {
-            let tag_conditions: Vec<String> = tags
-                .iter()
-                .map(|t| format!("rt.tag = '{}'", t))
-                .collect();
+            let mut tag_conditions = Vec::new();
+            for tag in tags {
+                tag_conditions.push(format!("rt.tag = ?{}", param_idx));
+                params_vec.push(Box::new(tag.clone()));
+                param_idx += 1;
+            }
             if !tag_conditions.is_empty() {
                 conditions.push(format!("({})", tag_conditions.join(" OR ")));
             }
-        }
-
-        if !joins.is_empty() {
-            sql.push_str(" ");
-            sql.push_str(&joins.join(" "));
         }
 
         if !conditions.is_empty() {
@@ -165,13 +173,17 @@ impl MetadataIndex {
         sql.push_str(" ORDER BY a.timestamp DESC");
 
         if let Some(limit) = query.limit {
-            sql.push_str(&format!(" LIMIT {}", limit));
+            conditions.push(format!("1 = 1 LIMIT ?{}", param_idx));
+            sql.push_str(&format!(" LIMIT ?{}", param_idx));
+            params_vec.push(Box::new(limit as i64));
         }
+
+        let params_refs: Vec<&dyn rusqlite::ToSql> = params_vec.iter().map(|p| p.as_ref()).collect();
 
         let mut stmt = self.conn.prepare(&sql)
             .context("Failed to prepare search query")?;
 
-        let rows = stmt.query_map([], |row| {
+        let rows = stmt.query_map(params_refs.as_slice(), |row| {
             let hash: String = row.get(0)?;
             let artifact_type: String = row.get(1)?;
             let timestamp: i64 = row.get(2)?;

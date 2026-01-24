@@ -97,6 +97,10 @@ fn main() -> Result<()> {
             let mut repo = Repository::open(&cli.repo)
                 .context("Failed to open repository")?;
 
+            // Validate artifact path
+            let artifact = artifact.canonicalize()
+                .context("Failed to resolve artifact path")?;
+            
             // Read artifact from file
             let artifact_data = std::fs::read_to_string(&artifact)
                 .context("Failed to read artifact file")?;
