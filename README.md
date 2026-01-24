@@ -238,7 +238,7 @@ The included **Time-Series Momentum** strategy demonstrates:
 
 ### Sprint 1 Note
 
-In Sprint 1, the workspace includes only the **core engine and schema crates**. The CLI, broker simulator, cost models, and other components are placeholder crates excluded from the workspace. To use the full functionality described below, you'll need to temporarily add the required crates to the workspace in `Cargo.toml`.
+In Sprint 1, the workspace includes the **core engine, schema, broker_sim, and cost crates**. The CLI and other advanced components (crv_verifier, hipcortex) are placeholder crates excluded from the workspace. To use the full functionality described below, you'll need to temporarily add the required crates to the workspace in `Cargo.toml`.
 
 ### Python Orchestrator (Future - Sprint 2+)
 
