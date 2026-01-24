@@ -65,6 +65,20 @@ pub fn calculate_stats(
 
     let initial_equity = equity_history[0].1;
     let final_equity = equity_history.last().unwrap().1;
+    
+    // Guard against division by zero
+    if initial_equity <= 0.0 {
+        return BacktestStats {
+            initial_equity,
+            final_equity,
+            total_return: 0.0,
+            num_trades,
+            total_commission,
+            sharpe_ratio: 0.0,
+            max_drawdown: 0.0,
+        };
+    }
+    
     let total_return = (final_equity - initial_equity) / initial_equity;
 
     // Calculate returns for Sharpe ratio
@@ -97,9 +111,12 @@ pub fn calculate_stats(
         if *equity > max_equity {
             max_equity = *equity;
         }
-        let drawdown = (max_equity - equity) / max_equity;
-        if drawdown > max_drawdown {
-            max_drawdown = drawdown;
+        // Guard against division by zero
+        if max_equity > 0.0 {
+            let drawdown = (max_equity - equity) / max_equity;
+            if drawdown > max_drawdown {
+                max_drawdown = drawdown;
+            }
         }
     }
 

@@ -28,7 +28,7 @@ impl TsMomentumStrategy {
             return None;
         }
         let start_price = self.price_history[self.price_history.len() - self.lookback];
-        let end_price = *self.price_history.back().unwrap();
+        let end_price = self.price_history[self.price_history.len() - 1];
         Some((end_price - start_price) / start_price)
     }
 
