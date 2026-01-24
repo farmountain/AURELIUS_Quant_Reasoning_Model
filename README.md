@@ -41,7 +41,10 @@ All randomness is **seeded** using `ChaCha8Rng` with explicit seeds:
 
 **No system time dependencies** - timestamps are simulation time only.
 
-**Verification**: The `crv_verifier` crate includes `test_hash_stability_across_runs` which validates that backtest outputs produce identical SHA-256 hashes across multiple runs.
+**Verification**: 
+- Sprint 1 determinism tests validate stable primitives (canonical serialization + SHA-256 hashing, seeded RNG).
+- Engine-level determinism tests will be added in Sprint 2 when backtest outputs are finalized.
+- The `crv_verifier` crate includes `test_hash_stability_across_runs` which validates that backtest outputs produce identical SHA-256 hashes across multiple runs.
 
 ## Overview
 
