@@ -1,20 +1,19 @@
 # Cost Models Crate
 
-## Sprint 1 Status: **PLACEHOLDER**
+## Sprint 1 Status: **ACTIVE**
 
-This crate will provide cost model implementations for trading costs including:
+This crate provides cost model implementations for trading costs including:
 - Commission models (fixed per share, percentage-based)
 - Slippage models
-- Market impact models
+- Zero-cost model for testing
 
-## Planned for Sprint 2+
+## Included in Sprint 1
 
-This crate is fully implemented but excluded from Sprint 1 workspace to maintain a minimal testable skeleton. It will be added back as a workspace member in Sprint 2.
+This crate is included as a workspace member in Sprint 1 because it is a required dev-dependency of the `engine` crate for testing.
 
 ## Implementation Status
 
 - ✅ Code complete
-- ✅ Tests passing
-- ⏸️ Not included in Sprint 1 workspace
-
-To use this crate in development, temporarily add it to the workspace members in the root `Cargo.toml`.
+- ✅ Tests passing (4 tests)
+- ✅ Included in Sprint 1 workspace
+- ✅ Runs in `make ci`

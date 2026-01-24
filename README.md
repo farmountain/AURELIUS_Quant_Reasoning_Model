@@ -12,13 +12,13 @@ The following crates are **active workspace members** and included in `make ci`:
 
 - **`schema`**: Core traits and data structures (DataFeed, Strategy, Portfolio, Order)
 - **`engine`**: Backtest engine with portfolio management, determinism support, and output generation
+- **`broker_sim`**: Broker simulator (required dependency of engine)
+- **`cost`**: Cost model implementations (required dev-dependency of engine)
 
 ### Placeholder Modules (Sprint 2+)
 
 The following crates are **fully implemented and tested** but excluded from the Sprint 1 workspace to maintain a minimal, cleanly compiling skeleton. They will be added as workspace members in Sprint 2:
 
-- **`cost`**: Cost model implementations (fixed per share, percentage-based, zero cost)
-- **`broker_sim`**: Broker simulator for order execution
 - **`cli`**: Command-line interface and example strategies
 - **`crv_verifier`**: Correctness, Robustness, and Validation suite (22 passing tests)
 - **`hipcortex`**: Content-addressed artifact storage for reproducibility (20 passing tests)
@@ -33,8 +33,8 @@ The following crates are **fully implemented and tested** but excluded from the 
 ├── crates/           # Rust crates (workspace members + placeholders)
 │   ├── schema/      # ✅ Active in Sprint 1
 │   ├── engine/      # ✅ Active in Sprint 1
-│   ├── cost/        # ⏸️ Placeholder (Sprint 2+)
-│   ├── broker_sim/  # ⏸️ Placeholder (Sprint 2+)
+│   ├── broker_sim/  # ✅ Active in Sprint 1 (engine dependency)
+│   ├── cost/        # ✅ Active in Sprint 1 (engine dev-dependency)
 │   ├── cli/         # ⏸️ Placeholder (Sprint 2+)
 │   ├── crv_verifier/# ⏸️ Placeholder (Sprint 2+)
 │   ├── hipcortex/   # ⏸️ Placeholder (Sprint 2+)
@@ -101,21 +101,21 @@ This project implements a deterministic, event-driven backtesting engine for qua
 
 ## Architecture
 
-The project is organized as a Cargo workspace. In **Sprint 1**, only the core crates are active workspace members:
+The project is organized as a Cargo workspace. In **Sprint 1**, the core crates and their dependencies are active workspace members:
 
 ### Sprint 1 Active Crates
 
 - **`schema`**: Core traits and data structures (DataFeed, Strategy, BrokerSim, CostModel)
 - **`engine`**: Backtest engine with portfolio management and output generation
+- **`broker_sim`**: Broker simulator for order execution (required by engine)
+- **`cost`**: Cost model implementations (required by engine tests)
 
 ### Sprint 2+ Placeholder Crates
 
 These crates are fully implemented but not yet included as workspace members:
 
-- **`cost`**: Cost model implementations (fixed per share, percentage-based, zero cost)
-- **`broker_sim`**: Broker simulator for order execution
-- **`crv_verifier`**: Correctness, Robustness, and Validation suite for backtest verification
 - **`cli`**: Command-line interface and example strategies
+- **`crv_verifier`**: Correctness, Robustness, and Validation suite for backtest verification
 - **`hipcortex`**: Content-addressed artifact storage for reproducibility and provenance tracking
 - **`aureus`**: Reserved for future development
 
@@ -336,13 +336,13 @@ The Sprint 1 workspace includes comprehensive tests for the active crates:
   - Determinism tests (hash-based validation, seeded RNG)
   - Backtest integration tests
   - Data feed tests
+- **`broker_sim`**: 2 passing tests (market order execution, determinism)
+- **`cost`**: 4 passing tests (commission calculations, model validation)
 
 ### Sprint 2+: Placeholder Crates
 
 The following tests exist for placeholder crates but are not run in Sprint 1 CI:
 
-- **`broker_sim`**: 2 tests (market order execution, determinism)
-- **`cost`**: 4 tests (commission sanity, model validation)
 - **`cli`**: 2 tests (strategy tests)
 - **`crv_verifier`**: 22 tests (bias detection, metric validation, policy constraints)
 - **`hipcortex`**: 20 tests (artifact storage, replay reproducibility)
@@ -351,6 +351,8 @@ The following tests exist for placeholder crates but are not run in Sprint 1 CI:
 
 ```
 schema: 0 tests (trait definitions only)
+broker_sim: 2 tests passed
+cost: 4 tests passed
 engine: 23 tests passed (14 unit + 9 determinism integration tests)
 ```
 

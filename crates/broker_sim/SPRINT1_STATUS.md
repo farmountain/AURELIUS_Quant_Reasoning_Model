@@ -1,21 +1,20 @@
 # Broker Simulator Crate
 
-## Sprint 1 Status: **PLACEHOLDER**
+## Sprint 1 Status: **ACTIVE**
 
-This crate will provide broker simulation for order execution including:
+This crate provides broker simulation for order execution including:
 - Market order execution
 - Fill generation
 - Order matching logic
 - Deterministic execution with seeded RNG
 
-## Planned for Sprint 2+
+## Included in Sprint 1
 
-This crate is fully implemented but excluded from Sprint 1 workspace to maintain a minimal testable skeleton. It will be added back as a workspace member in Sprint 2.
+This crate is included as a workspace member in Sprint 1 because it is a required dependency of the `engine` crate.
 
 ## Implementation Status
 
 - ✅ Code complete
-- ✅ Tests passing
-- ⏸️ Not included in Sprint 1 workspace
-
-To use this crate in development, temporarily add it to the workspace members in the root `Cargo.toml`.
+- ✅ Tests passing (2 tests)
+- ✅ Included in Sprint 1 workspace
+- ✅ Runs in `make ci`
