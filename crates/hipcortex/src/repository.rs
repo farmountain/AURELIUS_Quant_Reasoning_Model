@@ -7,6 +7,7 @@ use std::path::{Path, PathBuf};
 
 /// HipCortex repository for managing artifacts
 pub struct Repository {
+    #[allow(dead_code)]
     root: PathBuf,
     store: ContentStore,
     audit_log: AuditLog,
