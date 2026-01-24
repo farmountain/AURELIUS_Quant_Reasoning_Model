@@ -1,0 +1,8 @@
+# Cargo configuration for consistent tooling across the project
+
+[alias]
+# Quick format check (used in CI)
+fmt-check = "fmt --check"
+
+# Run tests with colored output
+test-all = "test --all --color=always"
