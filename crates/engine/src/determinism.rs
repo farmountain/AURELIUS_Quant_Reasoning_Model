@@ -28,10 +28,15 @@ pub fn stable_hash_bytes(data: &[u8]) -> String {
     hex::encode(result)
 }
 
-/// Serialize a value to canonical JSON bytes and hash it
+/// Serialize a value to JSON bytes and hash it
 ///
-/// This function serializes a value to JSON (deterministic ordering) and
-/// computes its SHA-256 hash. This is useful for hashing structured data.
+/// This function serializes a value to JSON and computes its SHA-256 hash.
+/// This is useful for hashing structured data.
+///
+/// **Note**: The serialization order depends on the order of fields in the struct.
+/// For deterministic hashing, ensure your structs use `#[derive(Serialize)]` which
+/// serializes fields in declaration order. Avoid using HashMap or other unordered
+/// collections if field ordering matters.
 ///
 /// # Examples
 ///
