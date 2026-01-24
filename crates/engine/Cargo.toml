@@ -15,10 +15,9 @@ serde_json = { workspace = true }
 csv = { workspace = true }
 polars = { workspace = true }
 sha2 = { workspace = true }
-hex = "0.4"
+hex = { workspace = true }
 
 [dev-dependencies]
 cost = { workspace = true }
-sha2 = { workspace = true }
 rand = { workspace = true }
 rand_chacha = { workspace = true }
