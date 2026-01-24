@@ -11,6 +11,12 @@ const SURVIVORSHIP_BIAS_DELISTED_THRESHOLD_PCT: f64 = 5.0;
 /// Threshold for cherry-picking detection (% of universe traded)
 const SURVIVORSHIP_BIAS_CHERRY_PICKING_THRESHOLD_PCT: f64 = 10.0;
 
+/// Minimum universe size for cherry-picking detection
+const MIN_UNIVERSE_SIZE_FOR_CHERRY_PICKING: usize = 10;
+
+/// Tolerance for max drawdown calculation validation
+const MAX_DRAWDOWN_TOLERANCE: f64 = 0.01;
+
 /// Policy constraints for verification
 #[derive(Debug, Clone)]
 pub struct PolicyConstraints {
@@ -61,6 +67,11 @@ impl CRVVerifier {
         fills: &[Fill],
         equity_history: &[(i64, f64)],
     ) -> Result<CRVReport> {
+        // Validate input
+        if equity_history.is_empty() {
+            anyhow::bail!("Equity history cannot be empty for CRV verification");
+        }
+
         let mut report = CRVReport::new(
             equity_history.last().map(|(t, _)| *t).unwrap_or(0)
         );
@@ -123,7 +134,8 @@ impl CRVVerifier {
         let total_count = universe.total_symbols;
         let traded_pct = (traded_count as f64 / total_count as f64) * 100.0;
         
-        if traded_pct < SURVIVORSHIP_BIAS_CHERRY_PICKING_THRESHOLD_PCT && total_count > 10 {
+        if traded_pct < SURVIVORSHIP_BIAS_CHERRY_PICKING_THRESHOLD_PCT 
+            && total_count > MIN_UNIVERSE_SIZE_FOR_CHERRY_PICKING {
             report.add_violation(CRVViolation {
                 rule_id: RuleId::SurvivorshipBias,
                 severity: Severity::Medium,
@@ -187,7 +199,7 @@ impl CRVVerifier {
         // Validate drawdown calculation by recomputing
         let computed_dd = self.compute_max_drawdown(equity_history);
         let dd_diff = (stats.max_drawdown - computed_dd).abs();
-        if dd_diff > 0.01 {
+        if dd_diff > MAX_DRAWDOWN_TOLERANCE {
             report.add_violation(CRVViolation {
                 rule_id: RuleId::MaxDrawdownValidation,
                 severity: Severity::High,
@@ -571,5 +583,17 @@ mod tests {
             v.rule_id == RuleId::SurvivorshipBias &&
             v.severity == Severity::Medium
         ));
+    }
+
+    #[test]
+    fn test_verifier_rejects_empty_equity_history() {
+        let verifier = CRVVerifier::with_defaults();
+        let stats = create_test_stats();
+        let fills = vec![];
+        let equity_history: Vec<(i64, f64)> = vec![];
+
+        let result = verifier.verify(&stats, &fills, &equity_history);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("cannot be empty"));
     }
 }

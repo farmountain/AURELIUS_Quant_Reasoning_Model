@@ -157,7 +157,7 @@ The project includes comprehensive tests:
 - **Strategy tests**: Tests strategy logic and determinism
 - **Integration tests**: End-to-end backtest validation
 - **CRV verification tests**: Tests bias detection, metric validation, and policy constraints
-  - 11 unit tests for core verification logic
+  - 12 unit tests for core verification logic
   - 7 flawed strategy tests (lookahead bias, excessive drawdown, bankruptcy, survivorship bias, etc.)
   - 3 golden-file tests for JSON report structure
 
@@ -168,7 +168,7 @@ broker_sim: 2 tests passed
 cost: 4 tests passed
 engine: 11 tests passed
 cli: 2 tests passed
-crv_verifier: 21 tests passed (11 unit + 7 integration + 3 golden)
+crv_verifier: 22 tests passed (12 unit + 7 integration + 3 golden)
 ```
 
 All critical modules exceed 90% test coverage.
