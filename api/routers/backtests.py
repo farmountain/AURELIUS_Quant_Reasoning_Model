@@ -7,6 +7,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 import sys
 import os
+import asyncio
 
 # Add paths for imports
 sys.path.insert(0, os.path.dirname(__file__))
@@ -20,6 +21,7 @@ from schemas.backtest import (
 )
 from database.session import get_db
 from database.crud import BacktestDB
+from websocket.manager import manager
 
 router = APIRouter(prefix="/api/v1/backtests", tags=["backtests"])
 
@@ -31,6 +33,16 @@ def _run_backtest(backtest_id: str, request: BacktestRequest, db: Session):
     try:
         # Update status to running
         BacktestDB.update_running(db, backtest_id)
+        
+        # Broadcast start event
+        asyncio.create_task(manager.broadcast({
+            "type": "backtest_started",
+            "data": {
+                "backtest_id": backtest_id,
+                "strategy_id": request.strategy_id,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        }, event_type="backtest_started"))
         
         # Simulate backtest computation
         import random
@@ -58,8 +70,30 @@ def _run_backtest(backtest_id: str, request: BacktestRequest, db: Session):
         # Update with results
         BacktestDB.update_completed(db, backtest_id, metrics_dict, duration)
         
+        # Broadcast completion event
+        asyncio.create_task(manager.broadcast({
+            "type": "backtest_completed",
+            "data": {
+                "backtest_id": backtest_id,
+                "strategy_id": request.strategy_id,
+                "metrics": metrics_dict,
+                "duration": duration,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        }, event_type="backtest_completed"))
+        
     except Exception as e:
         BacktestDB.update_failed(db, backtest_id, str(e))
+        
+        # Broadcast error event
+        asyncio.create_task(manager.broadcast({
+            "type": "backtest_failed",
+            "data": {
+                "backtest_id": backtest_id,
+                "error": str(e),
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        }, event_type="backtest_completed"))
 
 
 @router.post("/run", response_model=dict)

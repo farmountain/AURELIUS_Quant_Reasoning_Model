@@ -29,6 +29,7 @@ from schemas.strategy import (
 )
 from database.session import get_db
 from database.crud import StrategyDB
+from websocket.manager import manager
 
 router = APIRouter(prefix="/api/v1/strategies", tags=["strategies"])
 
@@ -95,6 +96,17 @@ async def generate_strategies(request: StrategyGenerationRequest, db: Session = 
                 confidence=strategy_data["confidence"],
             )
             strategies.append(strategy)
+        
+        # Broadcast WebSocket event for strategy creation
+        import asyncio
+        asyncio.create_task(manager.broadcast({
+            "type": "strategy_created",
+            "data": {
+                "request_id": request_id,
+                "strategy_count": len(strategies),
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        }, event_type="strategy_created"))
         
         return StrategyGenerationResponse(
             request_id=request_id,

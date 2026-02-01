@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Import routers
-from routers import strategies, backtests, validation, gates, auth
+from routers import strategies, backtests, validation, gates, auth, websocket
 
 # Create FastAPI app
 app = FastAPI(
@@ -35,6 +35,7 @@ app.include_router(strategies.router)
 app.include_router(backtests.router)
 app.include_router(validation.router)
 app.include_router(gates.router)
+app.include_router(websocket.router)
 
 # Initialize database
 from database.session import Base, engine
