@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Import routers
-from routers import strategies, backtests, validation, gates
+from routers import strategies, backtests, validation, gates, auth
 
 # Create FastAPI app
 app = FastAPI(
@@ -30,6 +30,7 @@ app.add_middleware(
 )
 
 # Include routers
+app.include_router(auth.router)
 app.include_router(strategies.router)
 app.include_router(backtests.router)
 app.include_router(validation.router)
