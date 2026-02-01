@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import Strategies from './pages/Strategies';
 import StrategyDetail from './pages/StrategyDetail';
 import Backtests from './pages/Backtests';
+import Validations from './pages/Validations';
+import Gates from './pages/Gates';
 
 function App() {
   return (
@@ -19,8 +21,8 @@ function App() {
               <Route path="/strategies" element={<Strategies />} />
               <Route path="/strategies/:id" element={<StrategyDetail />} />
               <Route path="/backtests" element={<Backtests />} />
-              <Route path="/validations" element={<PlaceholderPage title="Validations" />} />
-              <Route path="/gates" element={<PlaceholderPage title="Gates" />} />
+              <Route path="/validations" element={<Validations />} />
+              <Route path="/gates" element={<Gates />} />
               <Route path="/reflexion" element={<PlaceholderPage title="Reflexion" />} />
               <Route path="/orchestrator" element={<PlaceholderPage title="Orchestrator" />} />
             </Routes>
