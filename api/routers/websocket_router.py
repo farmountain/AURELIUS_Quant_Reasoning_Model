@@ -1,8 +1,13 @@
 """WebSocket endpoint for real-time updates."""
 
 import logging
+import sys
+from pathlib import Path
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, status
 from fastapi.responses import JSONResponse
+
+# Add parent directory to path to avoid namespace conflicts
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from websocket.manager import manager
 from security.auth import verify_token

@@ -11,7 +11,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Import routers
-from routers import strategies, backtests, validation, gates, auth, websocket
+from routers import strategies, backtests, validation, gates, auth
+from routers import websocket_router
 
 # Create FastAPI app
 app = FastAPI(
@@ -35,13 +36,17 @@ app.include_router(strategies.router)
 app.include_router(backtests.router)
 app.include_router(validation.router)
 app.include_router(gates.router)
-app.include_router(websocket.router)
+app.include_router(websocket_router.router)
 
 # Initialize database
 from database.session import Base, engine
 
-# Create tables on startup
-Base.metadata.create_all(bind=engine)
+# Create tables on startup (wrapped in try/except for graceful degradation)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(f"⚠️  Database connection failed on startup: {e}")
+    print("⚠️  API will run but database operations may fail")
 
 @app.get("/")
 async def root():
