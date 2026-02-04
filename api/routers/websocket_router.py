@@ -54,7 +54,7 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
           {"action": "ping"}
     """
     user_id = None
-    
+
     try:
         # Verify JWT token
         token_data = verify_token(token)
@@ -62,7 +62,7 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
             return
         user_id = token_data.user_id
-        
+
         # Accept connection
         await manager.connect(websocket, user_id)
 
@@ -106,19 +106,19 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
 
             else:
                 logger.warning(f"Unknown action from user {user_id}: {action}")
-    
+
     except WebSocketDisconnect:
         if user_id:
             manager.disconnect(websocket, user_id)
         logger.info(f"WebSocket disconnected normally for user {user_id}")
-    
+
     except Exception as e:
         if user_id:
             manager.disconnect(websocket, user_id)
         logger.error(f"WebSocket error for user {user_id}: {e}")
         try:
             await websocket.close(code=status.WS_1011_INTERNAL_ERROR)
-        except:
+        except Exception:
             pass
 
 

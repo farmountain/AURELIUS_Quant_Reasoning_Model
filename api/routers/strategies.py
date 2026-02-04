@@ -1,8 +1,7 @@
 """Strategy management router."""
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
 from fastapi import APIRouter, HTTPException, Query, Depends
-from typing import Optional
 from sqlalchemy.orm import Session
 import sys
 import os
@@ -12,7 +11,6 @@ sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../python'))
 
 try:
-    from aureus.tasks.task_generator import TaskGenerator
     from aureus.cli import parse_goal_to_spec
     HAS_AUREUS = True
 except ImportError:
@@ -53,22 +51,22 @@ async def generate_strategies(request: StrategyGenerationRequest, current_user: 
         # Parse goal to spec
         if HAS_AUREUS:
             spec = parse_goal_to_spec(request.goal)
-        
+
         # Convert risk preference to parameters
         risk_params = _risk_to_params(request.risk_preference.value)
-        
+
         # Create generated strategies
         strategies = []
         strategy_types = [
-            "ts_momentum", "pairs_trading", "stat_arb", 
+            "ts_momentum", "pairs_trading", "stat_arb",
             "ml_classifier", "volatility_trading"
         ]
-        
+
         request_id = str(uuid.uuid4())
-        
+
         for i, strategy_type in enumerate(strategy_types[:request.max_strategies]):
             param_adj = 1.0 - (i * 0.1)  # Decrease confidence for lower-ranked
-            
+
             # Create parameters dict
             params_dict = {
                 "lookback": int(risk_params["lookback"] * param_adj),
@@ -77,7 +75,7 @@ async def generate_strategies(request: StrategyGenerationRequest, current_user: 
                 "stop_loss": 2.0,
                 "take_profit": 5.0,
             }
-            
+
             # Save to database
             strategy_data = {
                 "name": f"{strategy_type.replace('_', ' ').title()} Strategy",
@@ -86,9 +84,9 @@ async def generate_strategies(request: StrategyGenerationRequest, current_user: 
                 "confidence": 0.9 - (i * 0.1),
                 "parameters": params_dict,
             }
-            
+
             db_strategy = StrategyDB.create(db, strategy_data)
-            
+
             # Create response object
             strategy = GeneratedStrategy(
                 id=db_strategy.id,
@@ -99,7 +97,7 @@ async def generate_strategies(request: StrategyGenerationRequest, current_user: 
                 confidence=strategy_data["confidence"],
             )
             strategies.append(strategy)
-        
+
         # Broadcast WebSocket event for strategy creation
         import asyncio
         asyncio.create_task(manager.broadcast({
@@ -110,13 +108,13 @@ async def generate_strategies(request: StrategyGenerationRequest, current_user: 
                 "timestamp": datetime.utcnow().isoformat()
             }
         }, event_type="strategy_created"))
-        
+
         return StrategyGenerationResponse(
             request_id=request_id,
             strategies=strategies,
             generation_time_ms=125.5,  # Mock timing
         )
-    
+
     except Exception as e:
         raise HTTPException(
             status_code=400,
@@ -133,7 +131,7 @@ async def list_strategies(
 ):
     """List all generated strategies."""
     strategies_db, total = StrategyDB.list(db, skip=skip, limit=limit)
-    
+
     strategies = []
     for s in strategies_db:
         strategy = GeneratedStrategy(
@@ -145,7 +143,7 @@ async def list_strategies(
             confidence=s.confidence,
         )
         strategies.append(strategy)
-    
+
     return StrategyListResponse(
         total=total,
         strategies=strategies,
@@ -156,13 +154,13 @@ async def list_strategies(
 async def get_strategy(strategy_id: str, db: Session = Depends(get_db)):
     """Get details for a specific strategy."""
     strategy_db = StrategyDB.get(db, strategy_id)
-    
+
     if not strategy_db:
         raise HTTPException(
             status_code=404,
             detail=f"Strategy {strategy_id} not found"
         )
-    
+
     strategy = GeneratedStrategy(
         strategy_type=StrategyType(strategy_db.strategy_type),
         name=strategy_db.name,
@@ -170,7 +168,7 @@ async def get_strategy(strategy_id: str, db: Session = Depends(get_db)):
         parameters=StrategyParameters(**strategy_db.parameters),
         confidence=strategy_db.confidence,
     )
-    
+
     return StrategyDetailResponse(
         strategy_id=strategy_id,
         strategy=strategy,
@@ -183,13 +181,13 @@ async def get_strategy(strategy_id: str, db: Session = Depends(get_db)):
 async def validate_strategy(strategy_id: str, db: Session = Depends(get_db)):
     """Run quick validation on strategy parameters."""
     strategy_db = StrategyDB.get(db, strategy_id)
-    
+
     if not strategy_db:
         raise HTTPException(
             status_code=404,
             detail=f"Strategy {strategy_id} not found"
         )
-    
+
     return {
         "strategy_id": strategy_id,
         "valid": True,
