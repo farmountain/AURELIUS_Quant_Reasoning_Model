@@ -1,0 +1,18 @@
+2026-02-04 21:48:55,051 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "C:\Python312\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2026-02-04 21:48:55,942 - main - INFO - POST /auth/register - Status: 200 - Time: 1.001s
+2026-02-04 21:48:56,786 - main - INFO - POST /auth/login - Status: 200 - Time: 0.836s
+2026-02-04 21:48:56,807 - main - INFO - GET /auth/verify - Status: 200 - Time: 0.012s
+2026-02-04 21:48:56,961 - main - INFO - POST /api/v1/strategies/generate - Status: 200 - Time: 0.145s
+2026-02-04 21:48:57,010 - main - INFO - GET /api/v1/strategies/ - Status: 200 - Time: 0.041s
+2026-02-04 21:48:57,044 - main - INFO - POST /api/v1/strategies/generate - Status: 200 - Time: 0.018s
+2026-02-04 21:48:57,105 - main - INFO - POST /api/v1/backtests/run - Status: 200 - Time: 0.055s
+2026-02-04 21:48:57,378 - websocket.manager - INFO - WebSocket connected for user 68be417f-7280-4b2e-8583-569214050d8e. Total connections: 1
+2026-02-04 21:48:57,388 - websocket.manager - INFO - WebSocket disconnected for user 68be417f-7280-4b2e-8583-569214050d8e. Total connections: 0
+2026-02-04 21:48:57,389 - routers.websocket_router - INFO - WebSocket disconnected normally for user 68be417f-7280-4b2e-8583-569214050d8e
+2026-02-04 21:48:57,395 - main - INFO - GET /api/v1/strategies/ - Status: 401 - Time: 0.001s
+2026-02-04 21:48:57,410 - main - INFO - GET /auth/verify - Status: 401 - Time: 0.004s
