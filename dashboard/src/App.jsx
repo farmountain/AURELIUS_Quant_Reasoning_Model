@@ -12,6 +12,7 @@ import Gates from './pages/Gates';
 import Reflexion from './pages/Reflexion';
 import Orchestrator from './pages/Orchestrator';
 import Profile from './pages/Profile';
+import AdvancedFeatures from './pages/AdvancedFeatures';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -116,6 +117,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/advanced"
+                element={
+                  <ProtectedRoute>
+                    <AdvancedFeatures />
                   </ProtectedRoute>
                 }
               />

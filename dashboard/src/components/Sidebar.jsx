@@ -6,7 +6,8 @@ import {
   CheckCircle2, 
   Shield,
   RefreshCw,
-  Activity
+  Activity,
+  TrendingUp
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -20,6 +21,7 @@ const Sidebar = () => {
     { name: 'Gates', href: '/gates', icon: Shield },
     { name: 'Reflexion', href: '/reflexion', icon: RefreshCw },
     { name: 'Orchestrator', href: '/orchestrator', icon: Activity },
+    { name: 'Advanced', href: '/advanced', icon: TrendingUp },
   ];
 
   return (
