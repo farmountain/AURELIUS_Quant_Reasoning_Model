@@ -18,3 +18,157 @@ AttributeError: module 'bcrypt' has no attribute '__about__'
 2026-02-04 21:48:57,410 - main - INFO - GET /auth/verify - Status: 401 - Time: 0.004s
 2026-02-05 08:25:11,279 - main - ERROR - Health check - Database error: Not an executable object: 'SELECT 1'
 2026-02-05 08:25:11,282 - main - INFO - GET /health - Status: 200 - Time: 0.004s
+2026-02-05 09:06:23,687 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.UndefinedColumn) column "user_id" does not exist
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_strategies_user_id ON strategies(user_id)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-05 09:06:23,692 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_strategies_created_at ON strategies(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,695 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_strategies_name ON strategies(name)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,699 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_strategy_id ON backtests(strategy_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,702 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_user_id ON backtests(user_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,704 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_created_at ON backtests(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,708 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_final_value ON backtests(final_value DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,714 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_validations_strategy_id ON validations(strategy_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,722 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_validations_created_at ON validations(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,725 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_strategy_id ON gates(strategy_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,727 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_gate_type ON gates(gate_type)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,734 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_passed ON gates(passed)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,739 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_created_at ON gates(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,741 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_reflexion_strategy_id ON reflexion_history(strategy_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,745 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_reflexion_created_at ON reflexion_history(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,750 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,755 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,763 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_strategy_created ON backtests(strategy_id, created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,772 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_strategy_type ON gates(strategy_id, gate_type)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:06:23,774 - database.optimization - INFO - Database indexes created successfully
+2026-02-05 09:08:43,172 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.UndefinedColumn) column "user_id" does not exist
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_strategies_user_id ON strategies(user_id)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-05 09:08:43,175 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_strategies_created_at ON strategies(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,179 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_strategies_name ON strategies(name)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,181 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_strategy_id ON backtests(strategy_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,183 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_user_id ON backtests(user_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,186 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_created_at ON backtests(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,187 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_final_value ON backtests(final_value DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,190 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_validations_strategy_id ON validations(strategy_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,193 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_validations_created_at ON validations(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,195 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_strategy_id ON gates(strategy_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,197 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_gate_type ON gates(gate_type)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,200 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_passed ON gates(passed)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,201 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_created_at ON gates(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,204 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_reflexion_strategy_id ON reflexion_history(strategy_id)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,207 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_reflexion_created_at ON reflexion_history(created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,212 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,215 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,217 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_backtests_strategy_created ON backtests(strategy_id, created_at DESC)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,219 - database.optimization - WARNING - Index creation skipped: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
+
+[SQL: CREATE INDEX IF NOT EXISTS idx_gates_strategy_type ON gates(strategy_id, gate_type)]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-02-05 09:08:43,221 - database.optimization - INFO - Database indexes created successfully

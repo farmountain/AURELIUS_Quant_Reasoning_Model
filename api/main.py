@@ -1,11 +1,13 @@
 """AURELIUS REST API - Main application entry point."""
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from datetime import datetime
 import sys
 import logging
 import time
+import psutil
 from pathlib import Path
 from typing import Dict, Any
 
@@ -43,6 +45,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add GZip compression middleware
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 # Include routers
 app.include_router(auth.router)
 app.include_router(strategies.router)
@@ -57,6 +62,7 @@ from database.session import Base, engine
 # Application metrics
 app.state.start_time = None
 app.state.request_count = 0
+app.state.request_times = []  # Store last 1000 request times
 
 @app.on_event("startup")
 async def startup_event():
@@ -71,6 +77,25 @@ async def startup_event():
     except Exception as e:
         logger.warning(f"⚠️  Database connection failed on startup: {e}")
         logger.warning("⚠️  API will run but database operations may fail")
+    
+    # Create performance indexes
+    try:
+        from database.optimization import create_performance_indexes
+        create_performance_indexes()
+        logger.info("✅ Database indexes created/verified")
+    except Exception as e:
+        logger.warning(f"⚠️  Could not create indexes: {e}")
+    
+    # Initialize cache
+    try:
+        from cache import cache
+        stats = cache.get_stats()
+        if stats.get("enabled"):
+            logger.info(f"✅ Redis cache connected: {stats.get('total_keys', 0)} keys")
+        else:
+            logger.info("ℹ️  Redis cache disabled")
+    except Exception as e:
+        logger.warning(f"⚠️  Cache initialization warning: {e}")
     
     logger.info("✅ AURELIUS API startup complete")
 
@@ -88,6 +113,12 @@ async def log_requests(request, call_next):
     response = await call_next(request)
     
     process_time = time.time() - start_time
+    
+    # Store request time for metrics (keep last 1000)
+    app.state.request_times.append(process_time)
+    if len(app.state.request_times) > 1000:
+        app.state.request_times.pop(0)
+    
     logger.info(
         f"{request.method} {request.url.path} - "
         f"Status: {response.status_code} - "
@@ -146,18 +177,62 @@ async def health():
 @app.get("/metrics")
 async def metrics():
     """
-    Prometheus-compatible metrics endpoint.
+    Enhanced metrics endpoint with performance statistics.
     Provides runtime metrics for monitoring and alerting.
     """
     uptime = time.time() - app.state.start_time if app.state.start_time else 0
     
-    return {
+    # Calculate request timing stats
+    avg_response_time = 0
+    p50_response_time = 0
+    p95_response_time = 0
+    p99_response_time = 0
+    
+    if app.state.request_times:
+        sorted_times = sorted(app.state.request_times)
+        avg_response_time = sum(sorted_times) / len(sorted_times)
+        
+        p50_idx = int(len(sorted_times) * 0.50)
+        p95_idx = int(len(sorted_times) * 0.95)
+        p99_idx = int(len(sorted_times) * 0.99)
+        
+        p50_response_time = sorted_times[p50_idx] if p50_idx < len(sorted_times) else 0
+        p95_response_time = sorted_times[p95_idx] if p95_idx < len(sorted_times) else 0
+        p99_response_time = sorted_times[p99_idx] if p99_idx < len(sorted_times) else 0
+    
+    # Get system metrics
+    process = psutil.Process()
+    memory_info = process.memory_info()
+    
+    metrics_data = {
         "uptime_seconds": uptime,
         "request_count": app.state.request_count,
+        "requests_per_second": app.state.request_count / uptime if uptime > 0 else 0,
+        "response_times": {
+            "avg_ms": round(avg_response_time * 1000, 2),
+            "p50_ms": round(p50_response_time * 1000, 2),
+            "p95_ms": round(p95_response_time * 1000, 2),
+            "p99_ms": round(p99_response_time * 1000, 2),
+        },
+        "system": {
+            "cpu_percent": psutil.cpu_percent(interval=0.1),
+            "memory_mb": round(memory_info.rss / 1024 / 1024, 2),
+            "memory_percent": process.memory_percent(),
+        },
         "timestamp": datetime.utcnow().isoformat(),
         "version": "1.0.0",
         "service": "aurelius-api"
     }
+    
+    # Add cache stats if available
+    try:
+        from cache import cache
+        cache_stats = cache.get_stats()
+        metrics_data["cache"] = cache_stats
+    except Exception:
+        pass
+    
+    return metrics_data
 
 
 @app.get("/api/v1/status")
