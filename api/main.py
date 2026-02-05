@@ -26,7 +26,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Import routers
-from routers import strategies, backtests, validation, gates, auth
+from routers import strategies, backtests, validation, gates, auth, advanced
 from routers import websocket_router
 
 # Create FastAPI app
@@ -54,6 +54,7 @@ app.include_router(strategies.router)
 app.include_router(backtests.router)
 app.include_router(validation.router)
 app.include_router(gates.router)
+app.include_router(advanced.router)
 app.include_router(websocket_router.router)
 
 # Initialize database
