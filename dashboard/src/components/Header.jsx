@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Activity, LogOut } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Activity, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { healthAPI } from '../services/api';
 
@@ -38,6 +39,13 @@ const Header = () => {
             <p className="text-sm font-medium text-white">{user?.name || user?.email}</p>
             <p className="text-xs text-gray-400">{user?.email}</p>
           </div>
+          <Link
+            to="/profile"
+            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+            title="Profile"
+          >
+            <User className="w-4 h-4" />
+          </Link>
           <button
             onClick={logout}
             className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"

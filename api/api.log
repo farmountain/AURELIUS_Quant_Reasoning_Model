@@ -16,3 +16,5 @@ AttributeError: module 'bcrypt' has no attribute '__about__'
 2026-02-04 21:48:57,389 - routers.websocket_router - INFO - WebSocket disconnected normally for user 68be417f-7280-4b2e-8583-569214050d8e
 2026-02-04 21:48:57,395 - main - INFO - GET /api/v1/strategies/ - Status: 401 - Time: 0.001s
 2026-02-04 21:48:57,410 - main - INFO - GET /auth/verify - Status: 401 - Time: 0.004s
+2026-02-05 08:25:11,279 - main - ERROR - Health check - Database error: Not an executable object: 'SELECT 1'
+2026-02-05 08:25:11,282 - main - INFO - GET /health - Status: 200 - Time: 0.004s

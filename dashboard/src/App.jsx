@@ -11,6 +11,7 @@ import Validations from './pages/Validations';
 import Gates from './pages/Gates';
 import Reflexion from './pages/Reflexion';
 import Orchestrator from './pages/Orchestrator';
+import Profile from './pages/Profile';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -107,6 +108,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Orchestrator />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 }
               />

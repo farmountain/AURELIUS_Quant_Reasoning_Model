@@ -5,12 +5,26 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('auth_token'));
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with true to check token on mount
   const [error, setError] = useState(null);
+
+  // Listen for logout events from API interceptor
+  useEffect(() => {
+    const handleLogout = () => {
+      setToken(null);
+      setUser(null);
+      setError('Session expired. Please log in again.');
+    };
+
+    window.addEventListener('auth:logout', handleLogout);
+    return () => window.removeEventListener('auth:logout', handleLogout);
+  }, []);
 
   useEffect(() => {
     if (token) {
       verifyToken();
+    } else {
+      setLoading(false);
     }
   }, [token]);
 
@@ -23,15 +37,20 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const userData = await response.json();
         setUser(userData.user);
+        setError(null);
       } else {
+        // Token is invalid
         setToken(null);
         localStorage.removeItem('auth_token');
         setUser(null);
+        setError('Session expired. Please log in again.');
       }
     } catch (err) {
+      console.error('Token verification failed:', err);
       setToken(null);
       localStorage.removeItem('auth_token');
       setUser(null);
+      setError('Unable to verify session. Please log in again.');
     } finally {
       setLoading(false);
     }
@@ -48,7 +67,8 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Invalid credentials');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Invalid credentials');
       }
 
       const data = await response.json();
@@ -75,7 +95,8 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Registration failed');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Registration failed');
       }
 
       const data = await response.json();
@@ -91,11 +112,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('auth_token');
+  const logout = async () => {
+    try {
+      // Call logout endpoint if token exists
+      if (token) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+        }).catch(() => {}); // Ignore errors on logout
+      }
+    } finally {
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem('auth_token');
+      setError(null);
+    }
   };
+
+  const clearError = () => setError(null);
 
   const value = {
     user,
@@ -105,6 +139,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    clearError,
     isAuthenticated: !!token && !!user,
   };
 
