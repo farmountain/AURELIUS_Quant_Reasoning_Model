@@ -1,663 +1,257 @@
 # AURELIUS Quant Reasoning Model
 
-An Evidence-Gated Intelligence Engine for Quant Reasoning - Event-Driven Backtest Engine in Rust with Python Orchestration
+AURELIUS is a quantitative research and strategy-evaluation platform that combines:
+- A deterministic Rust backtesting engine
+- A Python orchestration layer for strategy lifecycle and validation
+- A REST API and React dashboard for team workflows
+- Reproducibility tooling for auditability and governance
 
-> **📚 For a comprehensive overview of the entire project, architecture, and all phases, see [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)**
+It is designed for researchers, engineers, and decision makers who need transparent, testable, and production-oriented quant workflows.
 
-## ✅ Status: 100% COMPLETE - Production Ready! 🎉
+---
 
-AURELIUS development is now **100% COMPLETE** (All 13 Phases) with institutional-grade advanced quantitative trading features!
+## Table of Contents
 
-**Latest Commit**: `31b33e1` - Phase 13: Advanced Features Complete  
-**Test Results**: 36/36 tests passing ✅  
-**Production Status**: 🟢 Ready for deployment
+- [Why AURELIUS](#why-aurelius)
+- [Core Capabilities](#core-capabilities)
+- [Architecture](#architecture)
+- [Repository Layout](#repository-layout)
+- [Quick Start](#quick-start)
+- [Backtesting with Alpaca Data](#backtesting-with-alpaca-data)
+- [API and Dashboard](#api-and-dashboard)
+- [Validation and Governance](#validation-and-governance)
+- [Performance and Reliability](#performance-and-reliability)
+- [Roadmap and Documentation](#roadmap-and-documentation)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contributors](#contributors)
 
-### Phase 13: Advanced Features ✨ COMPLETE!
-- 📊 **Portfolio Optimization** - Modern Portfolio Theory (max Sharpe, min variance, risk parity)
-- 📈 **Efficient Frontier** - Calculate optimal risk/return combinations
-- ⚠️ **Risk Analytics** - VaR, CVaR, Sharpe, Sortino, Calmar, drawdowns
-- 🤖 **ML Optimization** - Optuna-based hyperparameter tuning with walk-forward validation
-- 💰 **Position Sizing** - Kelly criterion, volatility-based, max loss methods
-- 🛑 **Risk Management** - ATR-based stops, take-profit calculation, risk limits
-- 📉 **Custom Indicators** - 6 built-in indicators (SMA, EMA, RSI, MACD, Bollinger, ATR) + plugin system
-- 🌍 **Multi-Asset Support** - Stocks, futures, options (Black-Scholes), crypto, FX, commodities
-- 🎨 **Advanced UI** - Interactive portfolio optimization, risk analysis dashboard
-- 🧪 **20+ Tests Passing** - Comprehensive integration and unit tests
+---
 
-### Phase 12: Performance Optimization
-- 💾 **Redis Caching** - 87.5% hit rate, 60-80% faster responses
-- 🗄️ **Database Indexing** - 18 indexes, 40x faster queries
-- 🗜️ **GZip Compression** - 60-80% bandwidth savings
-- 📊 **Enhanced Metrics** - P50/P95/P99 response times, cache stats
-- 🧪 **Load Testing Suite** - 200 concurrent requests, 100% success rate
-- 📈 **125 req/sec Throughput** - Exceeds all performance targets
+## Why AURELIUS
 
-### Phase 11: Dashboard Authentication
-- 🔑 **JWT Token Management** - Automatic token attachment to all API requests
-- 🔄 **Session Persistence** - Auto-login on browser refresh
-- 👤 **User Profile Page** - Account details and settings
-- 🔒 **Password Management** - Secure in-app password changes
-- 🛡️ **Protected Routes** - All dashboard pages require authentication
-- 🧪 **12/12 Auth Tests Passing** - Comprehensive integration test suite
+Most strategy pipelines fail because they are hard to reproduce, difficult to validate out-of-sample, and disconnected from operational controls.
 
-### Phase 10: Production Deployment
-- 🐳 **Docker Containerization** - Multi-service orchestration with docker-compose
-- ☸️ **Kubernetes Deployment** - Auto-scaling, health checks, and load balancing
-- 🔄 **CI/CD Pipeline** - Automated testing, building, and deployment via GitHub Actions
-- 📊 **Monitoring & Logging** - Structured logging, metrics endpoint, health checks
-- ☁️ **Multi-Cloud Support** - AWS ECS/EKS, GCP GKE, Azure AKS configurations
-- 📚 **Deployment Docs** - Comprehensive guides for Docker, K8s, and cloud providers
+AURELIUS addresses that with:
+- Deterministic simulation primitives
+- Structured strategy generation and evaluation
+- Walk-forward validation and gate-based quality checks
+- API-first workflows for integration into internal tooling
 
-### Phase 7-9: Backend Authentication & Testing
-- 🔐 **User Management** - Register, login, token verification
-- 🛡️ **JWT Authentication** - Secure token-based auth with 30-min expiration
-- 🔒 **Bcrypt Password Hashing** - Enterprise-grade password security
-- 📡 **Real-time WebSocket** - Live strategy and backtest updates
-- ✅ **10/10 Integration Tests Passing** - Full API validation
+---
 
-### Core Features (Phases 1-7)
-- 🎯 **8 Professional Strategy Types** (momentum, mean-reversion, breakout, pairs trading, stat arb, ML classifier, carry trade, volatility trading)
-- 🔬 **Walk-Forward Validation** - Industry-standard out-of-sample testing
-- 🤖 **LLM-Assisted Strategy Generation** - GPT-4 and Claude-3.5 integration
-- 🛡️ **Dual-Loop Evidence Gates** - Automated quality assurance
-- 📊 **73 Rust Tests + 141 Python Tests** - All passing
-- 🌐 **Web Dashboard** - Complete React UI with 8 pages
-- 📡 **REST API** - 19 endpoints fully documented
-- 💾 **PostgreSQL Database** - 5 tables with migrations
-- ⚡ **Real-time WebSocket** - Frontend infrastructure ready
+## Core Capabilities
 
-### Active Workspace (Unified)
+### 1) Strategy Research and Backtesting
+- Event-driven OHLCV backtesting in Rust
+- Modular interfaces for data feeds, brokers, and cost models
+- Strategy templates and extensible strategy definitions
+- Trade logs, equity curves, and summary metrics output
 
-All crates are now **active workspace members** with complete CI/CD:
+### 2) Validation and Robustness
+- Walk-forward validation for out-of-sample testing
+- CRV verification for bias and metric sanity checks
+- Policy constraints (drawdown, leverage, turnover)
+- Evidence-driven pass/fail gates for deployment readiness
 
-- **`schema`**: Core traits and data structures (DataFeed, Strategy, Portfolio, Order)
-- **`engine`**: Backtest engine with portfolio management and determinism
-- **`broker_sim`**: Broker simulator for order execution
-- **`cost`**: Cost model implementations
-- **`cli`**: Command-line interface with example strategies
-- **`crv_verifier`**: CRV verification suite (12 passing tests)
-- **`hipcortex`**: Content-addressed artifact storage (20 passing tests)
+### 3) Advanced Quant Tooling
+- Portfolio optimization (max Sharpe, min variance, risk parity)
+- Efficient frontier calculations
+- Risk analytics (VaR/CVaR, drawdowns, Sharpe/Sortino/Calmar)
+- ML-based parameter optimization (Optuna-driven workflows)
+- Position sizing and risk management modules
 
-### Python Orchestrator
+### 4) Product Surface
+- REST API for strategy lifecycle and backtest operations
+- React dashboard for monitoring and control
+- WebSocket support for real-time updates
+- PostgreSQL persistence and Redis caching support
 
-- **`aureus`**: Complete Python orchestration framework with FSM, gates, and LLM integration
+---
 
-### Directory Structure
+## Architecture
 
-```
-├── crates/           # Rust crates (all active workspace members)
-│   ├── schema/      # ✅ Core traits and data structures
-│   ├── engine/      # ✅ Backtest engine
-│   ├── broker_sim/  # ✅ Broker simulator
-│   ├── cost/        # ✅ Cost models
-│   ├── cli/         # ✅ Command-line interface
-│   ├── crv_verifier/# ✅ CRV verification suite
-│   └── hipcortex/   # ✅ Artifact storage
-├── python/          # Python orchestrator (complete)
-│   ├── aureus/      # Core orchestration modules
-│   │   ├── fsm/     # Goal-guard state machine
-│   │   ├── gates/   # Dev and product gates
-│   │   ├── reflexion/ # Failure recovery loop
-│   │   └── tasks/   # Task generation and storage
-│   ├── tests/       # 141 Python tests (all passing)
-│   └── examples/    # Usage examples and demos
-├── docs/            # Documentation
-├── data/            # Sample data files
-├── specs/           # Formal specifications
-└── examples/        # Example strategies and data
-```
+### Rust Workspace (Core Engine)
+- `schema`: Core traits and canonical data structures
+- `engine`: Deterministic backtest engine and portfolio accounting
+- `broker_sim`: Simulated order execution
+- `cost`: Commission/slippage cost models
+- `cli`: Command-line workflows and sample strategies
+- `crv_verifier`: Verification and policy rule engine
+- `hipcortex`: Content-addressed artifact and reproducibility support
+
+### Python Layer
+- Orchestration workflows
+- Walk-forward validation tooling
+- Strategy generation helpers
+- Task/gate automation
+
+### Service Layer
+- FastAPI-based backend in [api/README.md](api/README.md)
+- React/Vite dashboard in [dashboard/README.md](dashboard/README.md)
+
+---
+
+## Repository Layout
+
+- [crates](crates) — Rust crates (engine, simulation, verifier, CLI)
+- [python](python) — Python orchestration and examples
+- [api](api) — REST API service and backend integrations
+- [dashboard](dashboard) — Web dashboard
+- [examples](examples) — Sample scripts and data workflows
+- [docs](docs) — Design and rollout documentation
+- [data](data) — Data artifacts and samples
+- [specs](specs) — Specifications
+
+---
 
 ## Quick Start
 
 ### Prerequisites
+- Rust 1.70+
+- Python 3.9+
+- Node.js 18+
+- Docker (optional, for full stack)
 
-- **Rust**: 1.70.0 or later (install from [rust-lang.org](https://rust-lang.org))
-- **Make**: GNU Make or compatible (for CI commands)
-- **Python**: 3.9+ (required for orchestrator)
-- **Optional**: OpenAI API key or Anthropic API key for LLM-assisted strategy generation
-
-### Build and Test
-
-Run the full CI pipeline to verify all gates pass:
+### 1) Clone and build core
 
 ```bash
-make ci
+cargo build --workspace
+cargo test --workspace
 ```
 
-This will execute:
-1. **Formatting check**: `cargo fmt --check` - ensures code is formatted
-2. **Linting**: `cargo clippy` - runs static analysis with pedantic warnings
-3. **Tests**: `cargo test --all` - runs all unit and integration tests
-
-### Individual Commands
+### 2) Python environment (optional but recommended)
 
 ```bash
-make fmt         # Autoformat code
-make fmt-check   # Check formatting without modifying
-make clippy      # Run linter (Sprint 1: warnings only, no PR failures)
-make test        # Run all tests
-```
-
-### Determinism Guarantee (Sprint 1)
-
-All randomness in the `engine` crate is **seeded** using `ChaCha8Rng` with explicit seeds for reproducibility.
-
-**No system time dependencies** - timestamps are simulation time only.PS D:\All_Projects\AURELIUS_Quant_Reasoning_Model> curl http://127.0.0.1:8000/healthcurl http://127.0.0.1:8000/health
-Invoke-WebRequest : A positional parameter cannot be 
-found that accepts argument 
-'http://127.0.0.1:8000/health'.
-At line:1 char:1
-+ curl http://127.0.0.1:8000/healthcurl 
-http://127.0.0.1:8000/health
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~
-    + CategoryInfo          : InvalidArgument: (:) [Invok 
-   e-WebRequest], ParameterBindingException
-    + FullyQualifiedErrorId : PositionalParameterNotFound 
-   ,Microsoft.PowerShell.Commands.InvokeWebRequestComman  
-  d
- 
-PS D:\All_Projects\AURELIUS_Quant_Reasoning_Model> 
-
-**Verification**: 
-- Sprint 1 determinism tests validate stable primitives (canonical serialization + SHA-256 hashing, seeded RNG).
-- The `engine` crate includes comprehensive determinism tests that validate stable hashing and seeded RNG behavior across multiple runs.
-
-## Overview
-
-This project implements a deterministic, event-driven backtesting engine for quantitative trading strategies. The engine is designed with:
-
-- **Determinism**: All randomness is seeded; no system time dependencies
-- **Event-driven architecture**: Bar-by-bar simulation with OHLCV data
-- **Portfolio accounting**: Tracks positions, cash, realized/unrealized PnL
-- **Pluggable components**: Modular traits for data feeds, strategies, brokers, and cost models
-- **Comprehensive testing**: 90%+ test coverage for critical modules
-- **Safety**: All crates forbid unsafe code with `#![forbid(unsafe_code)]`
-
-## Architecture
-
-The project is organized as a **unified Cargo workspace** with all crates active:
-
-### Rust Crates (All Active)
-
-- **`schema`**: Core traits and data structures (DataFeed, Strategy, BrokerSim, CostModel)
-- **`engine`**: Backtest engine with portfolio management and output generation (14 tests)
-- **`broker_sim`**: Broker simulator for order execution (2 tests)
-- **`cost`**: Cost model implementations (4 tests)
-- **`cli`**: Command-line interface and example strategies (2 tests)
-- **`crv_verifier`**: CRV verification suite for backtest validation (12 tests)
-- **`hipcortex`**: Content-addressed artifact storage for reproducibility (20 tests)
-
-**Total**: 73 Rust tests, all passing ✅
-
-### Python Orchestrator
-
-- **`aureus`**: Complete orchestration framework with FSM, gates, LLM integration, and task generation
-
-**Total**: 141 Python tests, all passing ✅
-
-### Python Orchestrator
-
-The **Python orchestrator** (`python/aureus`) provides a complete workflow controller:
-
-- **8 Strategy Templates**: Momentum, mean-reversion, breakout, pairs trading, stat arb, ML classifier, carry trade, volatility trading
-- **LLM Integration**: GPT-4 and Claude-3.5 for intelligent strategy generation
-- **Walk-Forward Validation**: Industry-standard time-series cross-validation with configurable windows
-- **Tool API wrappers**: JSON schema-validated wrappers for Rust CLI commands
-- **Goal-Guard FSM**: Enforces valid tool call sequences (11 states, 40+ transitions)
-- **Dual-loop evidence gates**:
-  - **Dev gate**: Tests pass, determinism check, lint verification
-  - **Product gate**: CRV verification, walk-forward validation, stress testing
-- **Reflexion loop**: Automatic failure analysis and repair plan generation
-- **Strict mode**: Artifact ID-only responses for reproducibility
-- **Task Generation**: Synthetic task creation for benchmarking
-
-See [python/README.md](python/README.md), [WALK_FORWARD_IMPLEMENTATION.md](WALK_FORWARD_IMPLEMENTATION.md), and [PHASE2_SUMMARY.md](PHASE2_SUMMARY.md) for detailed documentation.
-
-## Features
-
-### Core Traits
-
-- **`DataFeed`**: Provides market data (OHLCV bars)
-- **`Strategy`**: Trading strategy implementation
-- **`BrokerSim`**: Order execution and fill generation
-- **`CostModel`**: Commission and slippage calculation
-
-### Portfolio Accounting
-
-- Position tracking with average price calculation
-- Realized and unrealized PnL
-- Cash management
-- Equity curve generation
-
-### Determinism
-
-- Seeded random number generation (ChaCha8Rng)
-- No system time usage
-- Deterministic test passes across multiple runs
-
-### Outputs
-
-- `trades.csv`: All executed trades with timestamps
-- `equity_curve.csv`: Equity over time
-- `stats.json`: Backtest statistics (returns, Sharpe ratio, max drawdown, etc.)
-- `crv_report.json`: CRV verification report with detected violations
-
-### Walk-Forward Validation
-
-Industry-standard time-series cross-validation for robust out-of-sample testing:
-
-- **Configurable windows**: Default 3 windows with 70/30 train/test split
-- **Performance degradation analysis**: Detects overfitting via Sharpe degradation
-- **Threshold validation**: Minimum test Sharpe (default: 0.5) and max degradation (default: 30%)
-- **Stability scoring**: Measures consistency across windows
-- **JSON reports**: Complete validation analysis with per-window results
-
-Example usage:
-```python
-from aureus.walk_forward import WalkForwardValidator
-
-validator = WalkForwardValidator(
-    num_windows=3,
-    min_test_sharpe=0.5,
-    max_degradation=0.3
-)
-
-# Create windows from data
-windows = validator.create_windows("data/prices.csv")
-
-# Run backtests per window (external)
-# ...
-
-# Validate overall performance
-analysis = validator.validate(windows, results)
-if analysis.passed:
-    print(f"✅ Strategy passed (stability: {analysis.stability_score:.2%})")
-else:
-    print(f"❌ Failed: {analysis.failure_reasons}")
-```
-
-See [WALK_FORWARD_IMPLEMENTATION.md](WALK_FORWARD_IMPLEMENTATION.md) for complete documentation.
-
-### Strategy Templates
-
-AURELIUS includes **8 professional strategy templates** with intelligent parameter adjustment:
-
-1. **Time-Series Momentum** (`ts_momentum`) - Trend following with volatility targeting
-2. **Mean Reversion** (`mean_reversion`) - Bollinger band-based mean reversion
-3. **Breakout** (`breakout`) - Volatility breakout strategy
-4. **Pairs Trading** (`pairs_trading`) - Statistical arbitrage between correlated assets
-5. **Statistical Arbitrage** (`stat_arb`) - Multi-asset cointegration strategies
-6. **ML Classifier** (`ml_classifier`) - Machine learning for regime detection
-7. **Carry Trade** (`carry_trade`) - Interest rate differential strategies
-8. **Volatility Trading** (`volatility_trading`) - Options-based volatility arbitrage
-
-Strategies are generated from natural language goals:
-```python
-from aureus.orchestrator import Orchestrator
-
-orch = Orchestrator(llm_provider="openai")
-
-# Natural language goal
-goal = "Design a pairs trading strategy between tech stocks with low drawdown"
-
-# Automatically generates appropriate strategy config
-strategy = orch.generate_strategy(goal)
-print(strategy.type)  # "pairs_trading"
-print(strategy.entry_zscore)  # 2.0 (conservative)
-```
-
-### CRV Verification Suite
-
-The **CRV Verifier** automatically validates backtest correctness and robustness:
-
-#### Bias Detection
-- **Lookahead bias**: Detects if strategy uses future data (validates timestamp ordering)
-- **Survivorship bias**: Validates data completeness and universe composition
-
-#### Metric Validation
-- **Sharpe ratio**: Validates annualization correctness (sqrt(252) for daily data)
-- **Max drawdown**: Recomputes and validates drawdown calculations
-
-#### Policy Constraints
-- **Max drawdown limit**: Enforces configurable drawdown thresholds (default: 25%)
-- **Max leverage limit**: Detects bankruptcy and excessive leverage
-- **Turnover limit**: Monitors portfolio turnover (configurable)
-
-#### Report Format
-CRV reports include:
-- `rule_id`: Identifier for the violated rule
-- `severity`: Critical, High, Medium, Low, or Info
-- `message`: Human-readable description
-- `evidence`: Supporting details and pointers
-
-Example violation:
-```json
-{
-  "rule_id": "max_drawdown_constraint",
-  "severity": "high",
-  "message": "Max drawdown 35.00% exceeds limit 25.00%",
-  "evidence": [
-    "Observed: 0.3500",
-    "Limit: 0.2500"
-  ]
-}
-```
-
-### HipCortex: Artifact Storage
-
-HipCortex provides content-addressed storage for research artifacts with reproducibility tracking:
-
-```bash
-# Commit a strategy artifact
-hipcortex commit --artifact strategy.json --message "Add momentum strategy"
-
-# Search for artifacts
-hipcortex search --goal momentum --tag trending
-
-# Show artifact details
-hipcortex show <hash>
-
-# Replay computation for reproducibility verification
-hipcortex replay <result_hash> --data data.parquet
-```
-
-Features:
-- **Content-addressed storage**: SHA-256 hashing over canonical bytes
-- **Artifact types**: Dataset, StrategySpec, BacktestConfig, BacktestResult, CRVReport, Trace
-- **Append-only audit log**: Immutable commit history with lineage tracking
-- **SQLite metadata index**: Fast search by goal, regime tags, policy, timestamps
-- **CLI commands**: commit, show, diff, replay, search
-
-See [crates/hipcortex/README.md](crates/hipcortex/README.md) for detailed documentation.
-
-## Example Strategy
-
-The included **Time-Series Momentum** strategy demonstrates:
-
-- Lookback-based momentum signal
-- Volatility targeting for position sizing
-- Deterministic execution
-
-## Usage
-
-### Python Orchestrator
-
-The Python orchestrator provides a complete workflow with LLM-assisted strategy generation:
-
-```bash
-# Install Python package
 cd python
 pip install -e .
-
-# Set up LLM API key (optional, falls back to templates)
-export OPENAI_API_KEY="your-key"  # or ANTHROPIC_API_KEY
-
-# Validate installation
-aureus validate
-
-# Run with natural language goal
-aureus run \
-  --goal "design a pairs trading strategy between tech stocks with low risk" \
-  --data ../examples/data.parquet \
-  --max-drawdown 0.15
-
-# Enable walk-forward validation
-aureus run \
-  --goal "create a mean reversion strategy" \
-  --data ../examples/data.parquet \
-  --enable-walk-forward \
-  --walk-forward-windows 3
 ```
 
-The orchestrator automatically:
-1. Parses your natural language goal
-2. Generates appropriate strategy configuration (using LLM or templates)
-3. Runs backtests with the Rust engine
-4. Executes dev gate checks (tests, determinism, linting)
-5. Runs product gate validation (CRV, walk-forward if enabled)
-6. Commits successful strategies to HipCortex
+### 3) Run API (local)
 
-See [python/README.md](python/README.md) for detailed usage.
+See [api/README.md](api/README.md) for full setup.
 
-### Direct Rust CLI
+### 4) Run Dashboard (local)
 
-The CLI provides low-level access to the backtest engine:
+See [dashboard/README.md](dashboard/README.md) for local frontend setup.
+
+### 5) One-command checks
 
 ```bash
-# Build
-cargo build --release
-
-# Run backtest
-cargo run --bin quant_engine -- backtest \
-  --spec examples/spec.json \
-  --data examples/data.parquet \
-  --out output_dir
-
-# Verify CRV constraints
-cargo run --bin crv_verifier -- verify \
-  --stats output_dir/stats.json \
-  --trades output_dir/trades.csv \
-  --max-drawdown 0.25
-```
-
-### Build and Test
-
-```bash
-# Run full CI pipeline
 make ci
-
-# Individual commands
-make fmt         # Autoformat code
-make clippy      # Run linter
-make test        # Run all tests (73 Rust + 141 Python)
-
-# Run specific test suite
-cargo test --package engine
-pytest python/tests/test_walk_forward.py -v
 ```
 
-### Spec File Format
+---
 
-Strategy specifications support all 8 strategy types:
+## Backtesting with Alpaca Data
 
-**Time-Series Momentum:**
-```json
-{
-  "initial_cash": 100000.0,
-  "seed": 42,
-  "strategy": {
-    "type": "ts_momentum",
-    "symbol": "AAPL",
-    "lookback": 20,
-    "vol_target": 0.15,
-    "vol_lookback": 60
-  },
-  "cost_model": {
-    "type": "fixed_per_share",
-    "cost_per_share": 0.005,
-    "minimum_commission": 1.0
-  }
-}
-```
+A practical script is available at [examples/backtest_sp500_weekly_5pct_alpaca.py](examples/backtest_sp500_weekly_5pct_alpaca.py).
 
-**Pairs Trading:**
-```json
-{
-  "initial_cash": 100000.0,
-  "seed": 42,
-  "strategy": {
-    "type": "pairs_trading",
-    "symbol": "AAPL",
-    "secondary_symbol": "MSFT",
-    "lookback": 20,
-    "entry_zscore": 2.0,
-    "exit_zscore": 0.5,
-    "hedge_ratio_method": "ols"
-  }
-}
-```
+It supports:
+- S&P 500 universe proxy data collection via Alpaca
+- Reusable local CSV/Parquet input mode
+- Weekly threshold strategy variants (`trend_5`, `mr_ladder_5_10`)
 
-**Statistical Arbitrage:**
-```json
-{
-  "strategy": {
-    "type": "stat_arb",
-    "symbol": "SPY",
-    "basket": ["QQQ", "IWM", "DIA"],
-    "lookback": 20,
-    "entry_threshold": 2.0,
-    "cointegration_test": "adf"
-  }
-}
-```
+Required environment variables:
+- `APCA_API_KEY_ID`
+- `APCA_API_SECRET_KEY`
 
-**ML Classifier:**
-```json
-{
-  "strategy": {
-    "type": "ml_classifier",
-    "symbol": "AAPL",
-    "lookback": 20,
-    "num_features": 15,
-    "model_type": "random_forest",
-    "retrain_frequency": 20
-  }
-}
-```
-
-See [python/aureus/llm_strategy_generator.py](python/aureus/llm_strategy_generator.py) for all strategy types and parameters.
-
-### Generate Sample Data
+Example:
 
 ```bash
-python3 examples/generate_data.py
+python examples/backtest_sp500_weekly_5pct_alpaca.py \
+  --symbols-limit 500 \
+  --feed iex \
+  --start 2025-02-15T00:00:00Z \
+  --end 2026-02-15T00:00:00Z
 ```
 
-### Use HipCortex for Artifact Management
+---
 
-```bash
-# Initialize repository
-hipcortex --repo .hipcortex commit --artifact strategy.json --message "Initial strategy"
+## API and Dashboard
 
-# View commit history
-hipcortex show <hash>
+### API Highlights
+- Strategy generation and listing
+- Backtest execution and status
+- Validation and gate endpoints
+- Authentication and authorization support
 
-# Search artifacts
-hipcortex search --goal momentum
-```
+Reference: [api/README.md](api/README.md)
 
-## Test Coverage
+### Dashboard Highlights
+- Strategy and backtest monitoring
+- Gate status visibility
+- Real-time updates via WebSocket
+- Portfolio/risk tooling pages
 
-### Sprint 1: Active Crates
+Reference: [dashboard/README.md](dashboard/README.md)
 
-The Sprint 1 workspace includes comprehensive tests for the active crates:
+---
 
-- **`schema`**: Core trait definitions (no tests required)
-- **`engine`**: 23 passing tests including:
-  - Portfolio accounting invariants (correctness)
-  - Determinism tests (hash-based validation, seeded RNG)
-  - Backtest integration tests
-  - Data feed tests
-- **`broker_sim`**: 2 passing tests (market order execution, determinism)
-- **`cost`**: 4 passing tests (commission calculations, model validation)
+## Validation and Governance
 
-### Sprint 2+: Placeholder Crates
+AURELIUS includes governance-oriented checks:
+- Determinism checks for reproducible results
+- CRV policy verification and violation reporting
+- Walk-forward robustness checks before progression
+- Artifact traceability for audits and post-mortem analysis
 
-The following tests exist for placeholder crates but are not run in Sprint 1 CI:
+Relevant docs:
+- [WALK_FORWARD_IMPLEMENTATION.md](WALK_FORWARD_IMPLEMENTATION.md)
+- [LLM_STRATEGY_GENERATION.md](LLM_STRATEGY_GENERATION.md)
+- [TASK_GENERATOR_IMPLEMENTATION.md](TASK_GENERATOR_IMPLEMENTATION.md)
 
-- **`cli`**: 2 tests (strategy tests)
-- **`crv_verifier`**: 22 tests (bias detection, metric validation, policy constraints)
-- **`hipcortex`**: 20 tests (artifact storage, replay reproducibility)
+---
 
-### Sprint 1 Test Results
+## Performance and Reliability
 
-```
-schema: 0 tests (trait definitions only)
-broker_sim: 2 tests passed
-cost: 4 tests passed
-engine: 23 tests passed (14 unit + 9 determinism integration tests)
-```
+Project includes documented efforts on:
+- API caching and query optimization
+- Indexing and data access performance
+- Load and integration testing
+- Containerized deployment and Kubernetes manifests
 
-All critical modules exceed 90% test coverage.
+See:
+- [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
+- [DATABASE_SETUP.md](DATABASE_SETUP.md)
+- [docker-compose.yml](docker-compose.yml)
+- [k8s/deployment.yml](k8s/deployment.yml)
 
-## Evidence Gate Requirements
+---
 
-✅ **90%+ unit test coverage for critical modules**
-- Portfolio management: 100% coverage
-- Cost models: 100% coverage  
-- Broker simulation: 100% coverage
-- Backtest engine: 95%+ coverage
-- CRV verifier: 100% coverage
+## Roadmap and Documentation
 
-✅ **Determinism test passes across 3 runs**
-- Hash-based determinism validation implemented
-- All tests use seeded RNG (ChaCha8Rng with seed=42)
-- No system time dependencies
+For status and historical implementation details:
+- [CURRENT_STATUS.md](CURRENT_STATUS.md)
+- [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md)
+- [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)
+- [FINAL_SUMMARY.md](FINAL_SUMMARY.md)
 
-✅ **CRV verification suite implemented**
-- Lookahead bias detection
-- Survivorship bias detection (delisted symbols, cherry-picking)
-- Metric correctness validation (Sharpe ratio, max drawdown)
-- Policy constraint enforcement (max drawdown, leverage, turnover)
-- Comprehensive test suite with intentionally flawed strategies
-- Golden-file tests for JSON report structure
-- All tests use seeded RNG (ChaCha8Rng with seed=42)
-- No system time dependencies
-
-## Development
-
-### Adding a New Strategy
-
-Implement the `Strategy` trait:
-
-```rust
-use schema::{Bar, Order, Portfolio, Strategy};
-
-pub struct MyStrategy {
-    // Strategy state
-}
-
-impl Strategy for MyStrategy {
-    fn on_bar(&mut self, bar: &Bar, portfolio: &Portfolio) -> Vec<Order> {
-        // Generate orders based on bar and portfolio state
-        vec![]
-    }
-
-    fn name(&self) -> &str {
-        "MyStrategy"
-    }
-}
-```
-
-### Adding a New Cost Model
-
-Implement the `CostModel` trait:
-
-```rust
-use schema::{CostModel, Side};
-
-pub struct MyCostModel {
-    // Cost model parameters
-}
-
-impl CostModel for MyCostModel {
-    fn calculate_commission(&self, quantity: f64, price: f64) -> f64 {
-        // Calculate commission
-        0.0
-    }
-
-    fn calculate_slippage(&self, quantity: f64, price: f64, side: Side) -> f64 {
-        // Calculate slippage
-        0.0
-    }
-}
-```
-
-## License
-
-Apache License 2.0 - see [LICENSE](LICENSE) for details.
+---
 
 ## Contributing
 
-Contributions are welcome! Please ensure all tests pass and maintain test coverage above 90% for critical modules.
+Contributions are welcome.
+
+Please read:
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+
+Recommended contributor workflow:
+1. Create a branch
+2. Add tests for behavior changes
+3. Run `make ci`
+4. Open a pull request with clear scope and validation evidence
+
+---
+
+## License
+
+This repository is licensed under the terms in [LICENSE](LICENSE).
+
+---
+
+## Contributors
+
+See the repository contributor history and activity in GitHub Insights.
+
+If you are using AURELIUS internally, consider maintaining an internal changelog of strategy/policy decisions for governance traceability.
