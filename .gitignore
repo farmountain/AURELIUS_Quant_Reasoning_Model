@@ -59,3 +59,8 @@ htmlcov/
 examples/alpaca_data.parquet
 examples/output_alpaca_legacy/
 examples/output_alpaca_canonical/
+
+# Local runtime logs
+*.log
+api/live_api.err.log
+api/live_api.out.log
