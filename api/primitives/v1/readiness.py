@@ -152,17 +152,35 @@ async def score_readiness(
         # Convert signals dict to ReadinessSignals object
         signals = ReadinessSignals(**request.signals)
         
-        # Build readiness payload
-        payload = build_readiness_payload(signals)
+        # Build readiness payload using same logic as legacy endpoint
+        payload = build_readiness_payload(
+            strategy_id=request.strategy_id,
+            signals=signals
+        )
+        
+        # Extract response fields using consistent field names
+        overall_score = payload["score"]
+        color = payload["band"]  # "Green", "Amber", or "Red"
+        hard_blockers = payload["hard_blockers"]
+        
+        # Generate recommendation based on color band and blockers
+        if payload["blocked"]:
+            recommendation = f"Blocked for promotion. Address hard blockers: {', '.join(hard_blockers)}"
+        elif color == "Green":
+            recommendation = "Strategy ready for promotion"
+        elif color == "Amber":
+            recommendation = "Strategy may be promoted with caution. Review top blockers."
+        else:
+            recommendation = "Strategy not recommended for promotion. Address blockers."
         
         # Extract response fields
         response_data = ReadinessScoreResponse(
             strategy_id=request.strategy_id,
-            overall_score=payload["overall_score"],
-            color=payload["color"],
-            recommendation=payload["recommendation"],
-            dimensions=payload["dimensions"],
-            blockers=payload.get("blockers", [])
+            overall_score=overall_score,
+            color=color.upper(),  # "GREEN", "AMBER", "RED"
+            recommendation=recommendation,
+            dimensions=payload["components"],  # DROPS dimensions
+            blockers=hard_blockers  # Hard blockers list
         )
         
         # Build canonical response
@@ -207,4 +225,4 @@ async def readiness_health():
     
     Returns service health status.
     """
-    return {"status": "ok"}
+    return {"status": "healthy", "primitive": "readiness"}

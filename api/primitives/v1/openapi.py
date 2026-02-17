@@ -541,6 +541,105 @@ def generate_primitives_openapi_spec() -> Dict[str, Any]:
                         }
                     }
                 }
+            },
+            "/api/primitives/v1/readiness/score": {
+                "post": {
+                    "tags": ["readiness"],
+                    "summary": "Score promotion readiness using DROPS scorecard",
+                    "description": "Computes weighted readiness score from verification signals (Determinism, Risk, Policy, Ops, User dimensions).",
+                    "operationId": "score_readiness",
+                    "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+                    "requestBody": {
+                        "required": True,
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/ReadinessScoreRequest"},
+                                "example": {
+                                    "strategy_id": "momentum-v2",
+                                    "signals": {
+                                        "run_identity_present": True,
+                                        "parity_checked": True,
+                                        "parity_passed": True,
+                                        "validation_passed": True,
+                                        "crv_available": True,
+                                        "risk_metrics_complete": True,
+                                        "policy_block_reasons": [],
+                                        "lineage_complete": True,
+                                        "startup_status": "healthy",
+                                        "startup_reasons": [],
+                                        "evidence_stale": False,
+                                        "environment_caveat": None,
+                                        "evidence_classification": "GREEN",
+                                        "evidence_timestamp": "2024-01-15T10:30:00Z",
+                                        "contract_mismatch": False,
+                                        "maturity_label_visible": True
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Readiness score computed successfully",
+                            "content": {
+                                "application/json": {
+                                    "schema": {"$ref": "#/components/schemas/CanonicalEnvelope"},
+                                    "example": {
+                                        "data": {
+                                            "strategy_id": "momentum-v2",
+                                            "overall_score": 92.5,
+                                            "color": "GREEN",
+                                            "recommendation": "Strategy ready for promotion",
+                                            "dimensions": {
+                                                "D": 100.0,
+                                                "R": 95.0,
+                                                "O": 100.0,
+                                                "P": 85.0,
+                                                "U": 80.0
+                                            },
+                                            "blockers": []
+                                        },
+                                        "meta": {
+                                            "version": "v1",
+                                            "timestamp": "2024-01-15T10:30:00Z",
+                                            "primitive": "readiness"
+                                        },
+                                        "links": {
+                                            "self": "/api/primitives/v1/readiness/score"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {"$ref": "#/components/responses/BadRequest"},
+                        "401": {"$ref": "#/components/responses/Unauthorized"},
+                        "403": {"$ref": "#/components/responses/Forbidden"},
+                        "429": {"$ref": "#/components/responses/RateLimitExceeded"}
+                    }
+                }
+            },
+            "/api/primitives/v1/readiness/health": {
+                "get": {
+                    "tags": ["readiness"],
+                    "summary": "Check readiness primitive health",
+                    "operationId": "readiness_health",
+                    "responses": {
+                        "200": {
+                            "description": "Primitive is healthy",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "status": {"type": "string", "example": "healthy"},
+                                            "primitive": {"type": "string", "example": "readiness"}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "components": {
@@ -1010,6 +1109,65 @@ def generate_primitives_openapi_spec() -> Dict[str, Any]:
                         "summary": {"type": "string"}
                     },
                     "required": ["strategy_id", "iteration_num", "improvement_score", "suggestions", "summary"]
+                },
+                "ReadinessScoreRequest": {
+                    "type": "object",
+                    "description": "Request for promotion readiness scoring",
+                    "properties": {
+                        "strategy_id": {"type": "string", "description": "Strategy identifier"},
+                        "signals": {
+                            "type": "object",
+                            "description": "Readiness signals from various verification checks",
+                            "properties": {
+                                "run_identity_present": {"type": "boolean"},
+                                "parity_checked": {"type": "boolean"},
+                                "parity_passed": {"type": "boolean"},
+                                "validation_passed": {"type": "boolean"},
+                                "crv_available": {"type": "boolean"},
+                                "risk_metrics_complete": {"type": "boolean"},
+                                "policy_block_reasons": {"type": "array", "items": {"type": "string"}},
+                                "lineage_complete": {"type": "boolean"},
+                                "startup_status": {"type": "string", "enum": ["healthy", "degraded", "unavailable"]},
+                                "startup_reasons": {"type": "array", "items": {"type": "string"}},
+                                "evidence_stale": {"type": "boolean"},
+                                "environment_caveat": {"type": "string", "nullable": True},
+                                "evidence_classification": {"type": "string", "nullable": True},
+                                "evidence_timestamp": {"type": "string", "format": "date-time", "nullable": True},
+                                "contract_mismatch": {"type": "boolean"},
+                                "maturity_label_visible": {"type": "boolean"}
+                            },
+                            "required": ["run_identity_present", "parity_checked", "parity_passed", "validation_passed", "crv_available", "risk_metrics_complete", "policy_block_reasons", "lineage_complete", "startup_status", "startup_reasons", "evidence_stale", "contract_mismatch", "maturity_label_visible"]
+                        }
+                    },
+                    "required": ["strategy_id", "signals"]
+                },
+                "ReadinessScoreResponse": {
+                    "type": "object",
+                    "description": "Promotion readiness scoring result",
+                    "properties": {
+                        "strategy_id": {"type": "string"},
+                        "overall_score": {"type": "number", "format": "float", "minimum": 0, "maximum": 100, "description": "Weighted DROPS score (0-100)"},
+                        "color": {"type": "string", "enum": ["GREEN", "AMBER", "RED"], "description": "Traffic light band"},
+                        "recommendation": {"type": "string", "description": "Human-readable promotion decision"},
+                        "dimensions": {
+                            "type": "object",
+                            "description": "DROPS dimension scores",
+                            "properties": {
+                                "D": {"type": "number", "format": "float", "description": "Determinism score"},
+                                "R": {"type": "number", "format": "float", "description": "Risk score"},
+                                "O": {"type": "number", "format": "float", "description": "Ops score"},
+                                "P": {"type": "number", "format": "float", "description": "Policy score"},
+                                "U": {"type": "number", "format": "float", "description": "User/UI score"}
+                            },
+                            "required": ["D", "R", "O", "P", "U"]
+                        },
+                        "blockers": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "Hard blockers preventing promotion"
+                        }
+                    },
+                    "required": ["strategy_id", "overall_score", "color", "recommendation", "dimensions", "blockers"]
                 }
             },
             "securitySchemes": {
