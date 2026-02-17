@@ -42,12 +42,9 @@ router.include_router(strategy_router)
 
 from .evidence import router as evidence_router
 router.include_router(evidence_router)
-# from .evidence import router as evidence_router
-# from .reflexion import router as reflexion_router
-# from .orchestrator import router as orchestrator_router
 
-# router.include_router(strategy_router)
-# router.include_router(evidence_router)
+from .reflexion import router as reflexion_router
+router.include_router(reflexion_router)
 # router.include_router(reflexion_router)
 # router.include_router(orchestrator_router)
 # router.include_router(readiness_router)
