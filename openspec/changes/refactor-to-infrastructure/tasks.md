@@ -46,7 +46,7 @@
 - [x] 5.2 Extract acceptance evidence classification into `/api/primitives/v1/evidence/classify` endpoint
 - [x] 5.3 Extract reflexion feedback into `/api/primitives/v1/reflexion/suggest` endpoint
 - [x] 5.4 Define OpenAPI schemas for all three primitives with request/response examples
-- [ ] 5.5 Add primitive tests for strategy, evidence, reflexion (10+ scenarios each)
+- [x] 5.5 Add primitive tests for strategy, evidence, reflexion (10+ scenarios each)
 - [ ] 5.6 Document all three APIs with code examples
 
 ## 6. Orchestrator Primitive
