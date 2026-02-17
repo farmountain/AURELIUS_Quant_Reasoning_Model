@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 # Import routers
 from routers import strategies, backtests, validation, gates, auth, advanced, reflexion, orchestrator
 from routers import websocket_router
+from primitives.v1 import router as primitives_router
 
 # Create FastAPI app
 app = FastAPI(
@@ -50,6 +51,10 @@ app.add_middleware(
 # Add GZip compression middleware
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
+# Add primitive API monitoring middleware
+from primitives.monitoring import PrimitiveAPIMonitoringMiddleware
+app.add_middleware(PrimitiveAPIMonitoringMiddleware)
+
 # Include routers
 app.include_router(auth.router)
 app.include_router(strategies.router)
@@ -60,6 +65,9 @@ app.include_router(advanced.router)
 app.include_router(reflexion.router)
 app.include_router(orchestrator.router)
 app.include_router(websocket_router.router)
+
+# Include API primitives router (v1)
+app.include_router(primitives_router)
 
 # Initialize database
 from database.session import Base, engine

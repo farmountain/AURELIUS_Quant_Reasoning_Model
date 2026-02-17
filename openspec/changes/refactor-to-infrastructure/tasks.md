@@ -1,18 +1,15 @@
 ## 1. API Primitive Infrastructure Setup
 
-- [ ] 1.1 Create `/api/primitives/v1/` router directory structure with separate modules for each primitive
-- [ ] 1.2 Add OpenAPI specification generator to FastAPI app with `/api/primitives/v1/openapi.json` endpoint
-- [ ] 1.3 Implement canonical response envelope schema (data, meta, links) in `api/schemas/primitives.py`
-- [ ] 1.4 Add API key authentication middleware with bcrypt hashing and rate limiting (1000 req/hour default)
-- [ ] 1.5 Extend JWT authentication to support dual auth (API key OR JWT token) in `api/security/auth.py`
-- [ ] 1.6 Create feature flag system in `api/config.py` for primitive endpoint rollout control
-- [ ] 1.7 Add performance monitoring middleware for primitive API latency tracking (Datadog integration)
-- [ ] 1.8 Create primitive API test harness in `api/tests/primitives/` with contract test framework
-
-## 2. Determinism Primitive Extraction
-
-- [ ] 2.1 Extract determinism scoring logic from `api/services/determinism.py` into standalone primitive service
-- [ ] 2.2 Create `/api/primitives/v1/determinism/score` endpoint with POST handler
+- [x] 1.1 Create `/api/primitives/v1/` router directory structure with separate modules for each primitive
+- [x] 1.2 Add OpenAPI specification generator to FastAPI app with `/api/primitives/v1/openapi.json` endpoint
+- [x] 1.3 Implement canonical response envelope schema (data, meta, links) in `api/schemas/primitives.py`
+- [x] 1.4 Add API key authentication middleware with bcrypt hashing and rate limiting (1000 req/hour default)
+- [x] 1.5 Extend JWT authentication to support dual auth (API key OR JWT token) in `api/security/auth.py`
+- [x] 1.6 Create feature flag system in `api/config.py` for primitive endpoint rollout control
+- [x] 1.7 Add performance monitoring middleware for primitive API latency tracking (Datadog integration)
+- [x] 1.8 Create primitive API test harness in `api/tests/primitives/` with contract test framework
+- [x] 2.1 Extract determinism scoring logic from `api/services/determinism.py` into standalone primitive service
+- [x] 2.2 Create `/api/primitives/v1/determinism/score` endpoint with POST handler
 - [ ] 2.3 Define OpenAPI schema for DeterminismScoreRequest and DeterminismScoreResponse with examples
 - [ ] 2.4 Implement request validation with Pydantic models (backtest results, thresholds, confidence intervals)
 - [ ] 2.5 Add determinism primitive unit tests (10+ scenarios covering edge cases)
