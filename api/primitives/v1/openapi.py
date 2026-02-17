@@ -418,6 +418,129 @@ def generate_primitives_openapi_spec() -> Dict[str, Any]:
                         }
                     }
                 }
+            },
+            "/api/primitives/v1/strategy/verify": {
+                "post": {
+                    "tags": ["strategy"],
+                    "summary": "Verify strategy configuration",
+                    "operationId": "strategy_verify",
+                    "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+                    "requestBody": {
+                        "required": true,
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/StrategyVerifyRequest"}
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Strategy verification result",
+                            "content": {
+                                "application/json": {
+                                    "schema": {"$ref": "#/components/schemas/CanonicalEnvelope"}
+                                }
+                            }
+                        },
+                        "401": {"$ref": "#/components/responses/Unauthorized"},
+                        "403": {"$ref": "#/components/responses/Forbidden"},
+                        "429": {"$ref": "#/components/responses/RateLimitExceeded"}
+                    }
+                }
+            },
+            "/api/primitives/v1/strategy/health": {
+                "get": {
+                    "tags": ["strategy"],
+                    "summary": "Check strategy primitive health",
+                    "operationId": "strategy_health",
+                    "responses": {
+                        "200": {
+                            "description": "Primitive is healthy"
+                        }
+                    }
+                }
+            },
+            "/api/primitives/v1/evidence/classify": {
+                "post": {
+                    "tags": ["evidence"],
+                    "summary": "Classify evidence for promotion readiness",
+                    "operationId": "evidence_classify",
+                    "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+                    "requestBody": {
+                        "required": true,
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/EvidenceClassifyRequest"}
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Evidence classification result",
+                            "content": {
+                                "application/json": {
+                                    "schema": {"$ref": "#/components/schemas/CanonicalEnvelope"}
+                                }
+                            }
+                        },
+                        "401": {"$ref": "#/components/responses/Unauthorized"},
+                        "403": {"$ref": "#/components/responses/Forbidden"},
+                        "429": {"$ref": "#/components/responses/RateLimitExceeded"}
+                    }
+                }
+            },
+            "/api/primitives/v1/evidence/health": {
+                "get": {
+                    "tags": ["evidence"],
+                    "summary": "Check evidence primitive health",
+                    "operationId": "evidence_health",
+                    "responses": {
+                        "200": {
+                            "description": "Primitive is healthy"
+                        }
+                    }
+                }
+            },
+            "/api/primitives/v1/reflexion/suggest": {
+                "post": {
+                    "tags": ["reflexion"],
+                    "summary": "Generate improvement suggestions for strategy refinement",
+                    "operationId": "reflexion_suggest",
+                    "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+                    "requestBody": {
+                        "required": true,
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/ReflexionSuggestRequest"}
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Reflexion feedback with improvement suggestions",
+                            "content": {
+                                "application/json": {
+                                    "schema": {"$ref": "#/components/schemas/CanonicalEnvelope"}
+                                }
+                            }
+                        },
+                        "401": {"$ref": "#/components/responses/Unauthorized"},
+                        "403": {"$ref": "#/components/responses/Forbidden"},
+                        "429": {"$ref": "#/components/responses/RateLimitExceeded"}
+                    }
+                }
+            },
+            "/api/primitives/v1/reflexion/health": {
+                "get": {
+                    "tags": ["reflexion"],
+                    "summary": "Check reflexion primitive health",
+                    "operationId": "reflexion_health",
+                    "responses": {
+                        "200": {
+                            "description": "Primitive is healthy"
+                        }
+                    }
+                }
             }
         },
         "components": {
@@ -751,6 +874,142 @@ def generate_primitives_openapi_spec() -> Dict[str, Any]:
                         "summary": {"type": "string"}
                     },
                     "required": ["strategy_id", "passed", "compliance_score", "checks", "blockers", "warnings"]
+                },
+                "StrategyVerifyRequest": {
+                    "type": "object",
+                    "description": "Request for strategy verification",
+                    "properties": {
+                        "strategy_id": {"type": "string", "example": "momentum_001"},
+                        "strategy_type": {"type": "string", "enum": ["momentum", "mean_reversion", "trend_following", "pairs_trading", "volatility_trading", "ml_classifier"], "example": "momentum"},
+                        "parameters": {
+                            "type": "object",
+                            "description": "Strategy parameters to verify",
+                            "example": {
+                                "lookback": 20,
+                                "vol_target": 0.15,
+                                "position_size": 0.25,
+                                "stop_loss": 0.02,
+                                "take_profit": 0.05
+                            }
+                        },
+                        "context": {"type": "object", "description": "Additional context"}
+                    },
+                    "required": ["strategy_id", "strategy_type", "parameters"]
+                },
+                "StrategyVerifyResponse": {
+                    "type": "object",
+                    "description": "Strategy verification result",
+                    "properties": {
+                        "strategy_id": {"type": "string"},
+                        "valid": {"type": "boolean"},
+                        "validation_score": {"type": "number", "format": "float", "description": "Validation score (0-100)"},
+                        "checks": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "check_name": {"type": "string"},
+                                    "passed": {"type": "boolean"},
+                                    "severity": {"type": "string"},
+                                    "message": {"type": "string"},
+                                    "actual_value": {"type": "string"},
+                                    "expected_range": {"type": "string"}
+                                }
+                            }
+                        },
+                        "issues": {"type": "array", "items": {"type": "string"}},
+                        "warnings": {"type": "array", "items": {"type": "string"}},
+                        "summary": {"type": "string"}
+                    },
+                    "required": ["strategy_id", "valid", "validation_score", "checks"]
+                },
+                "EvidenceClassifyRequest": {
+                    "type": "object",
+                    "description": "Request for evidence classification",
+                    "properties": {
+                        "evidence_id": {"type": "string", "example": "evidence_001"},
+                        "evidence_type": {"type": "string", "enum": ["backtest", "validation", "gate_check", "acceptance_test", "production_metrics", "custom"], "example": "gate_check"},
+                        "data": {
+                            "type": "object",
+                            "description": "Evidence data to classify",
+                            "example": {
+                                "dev_status": 200,
+                                "crv_status": 200,
+                                "product_status": 200,
+                                "environment": "staging"
+                            }
+                        },
+                        "timestamp": {"type": "string", "format": "date-time", "example": "2026-02-17T10:00:00Z"},
+                        "max_age_hours": {"type": "integer", "minimum": 1, "maximum": 168, "default": 24}
+                    },
+                    "required": ["evidence_id", "evidence_type", "data"]
+                },
+                "EvidenceClassifyResponse": {
+                    "type": "object",
+                    "description": "Evidence classification result",
+                    "properties": {
+                        "evidence_id": {"type": "string"},
+                        "classification": {"type": "string", "enum": ["contract-valid-success", "contract-valid-failure", "contract-invalid-failure", "mixed", "stale", "incomplete", "valid"]},
+                        "confidence": {"type": "number", "format": "float", "minimum": 0, "maximum": 1},
+                        "details": {
+                            "type": "object",
+                            "properties": {
+                                "is_fresh": {"type": "boolean"},
+                                "age_hours": {"type": "number", "format": "float"},
+                                "completeness_score": {"type": "number", "format": "float"},
+                                "quality_indicators": {"type": "object"},
+                                "missing_fields": {"type": "array", "items": {"type": "string"}},
+                                "warnings": {"type": "array", "items": {"type": "string"}}
+                            }
+                        },
+                        "summary": {"type": "string"},
+                        "recommendations": {"type": "array", "items": {"type": "string"}}
+                    },
+                    "required": ["evidence_id", "classification", "confidence", "details"]
+                },
+                "ReflexionSuggestRequest": {
+                    "type": "object",
+                    "description": "Request for reflexion feedback suggestions",
+                    "properties": {
+                        "strategy_id": {"type": "string", "example": "momentum_001"},
+                        "iteration_num": {"type": "integer", "minimum": 1, "example": 2},
+                        "feedback": {"type": "string", "example": "Strategy underperforms in high volatility regimes"},
+                        "metrics": {
+                            "type": "object",
+                            "description": "Current strategy metrics",
+                            "example": {
+                                "sharpe_ratio": 1.2,
+                                "max_drawdown": 0.18,
+                                "win_rate": 0.55
+                            }
+                        },
+                        "context": {"type": "object", "description": "Additional context"}
+                    },
+                    "required": ["strategy_id", "iteration_num"]
+                },
+                "ReflexionSuggestResponse": {
+                    "type": "object",
+                    "description": "Reflexion feedback result",
+                    "properties": {
+                        "strategy_id": {"type": "string"},
+                        "iteration_num": {"type": "integer"},
+                        "improvement_score": {"type": "number", "format": "float", "minimum": -2.0, "maximum": 2.0, "description": "Improvement score (-2.0 to +2.0)"},
+                        "suggestions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "category": {"type": "string", "enum": ["parameter", "logic", "risk_management", "timing"]},
+                                    "priority": {"type": "string", "enum": ["high", "medium", "low"]},
+                                    "description": {"type": "string"},
+                                    "rationale": {"type": "string"},
+                                    "expected_impact": {"type": "string"}
+                                }
+                            }
+                        },
+                        "summary": {"type": "string"}
+                    },
+                    "required": ["strategy_id", "iteration_num", "improvement_score", "suggestions", "summary"]
                 }
             },
             "securitySchemes": {
