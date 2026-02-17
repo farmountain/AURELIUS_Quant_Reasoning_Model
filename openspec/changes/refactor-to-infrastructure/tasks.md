@@ -36,9 +36,9 @@
 - [x] 4.2 Define OpenAPI schemas for RiskValidateRequest (Sharpe, Sortino, drawdown, VaR thresholds)
 - [x] 4.3 Extract policy checking logic into `/api/primitives/v1/policy/check` endpoint
 - [x] 4.4 Define OpenAPI schemas for PolicyCheckRequest (regulatory rules, business constraints)
-- [ ] 4.5 Add risk primitive tests (8+ scenarios covering threshold violations, edge cases)
-- [ ] 4.6 Add policy primitive tests (8+ scenarios covering rule combinations)
-- [ ] 4.7 Document risk and policy APIs with integration examples
+- [x] 4.5 Add risk primitive tests (8+ scenarios covering threshold violations, edge cases)
+- [x] 4.6 Add policy primitive tests (8+ scenarios covering rule combinations)
+- [x] 4.7 Document risk and policy APIs with integration examples
 
 ## 5. Strategy, Evidence, and Reflexion Primitives
 
