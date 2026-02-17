@@ -304,6 +304,120 @@ def generate_primitives_openapi_spec() -> Dict[str, Any]:
                         }
                     }
                 }
+            },
+            "/api/primitives/v1/risk/validate": {
+                "post": {
+                    "tags": ["risk"],
+                    "summary": "Validate risk metrics",
+                    "description": "Validates Sharpe ratio, Sortino ratio, max drawdown, VaR, Calmar ratio, and volatility against configurable thresholds.",
+                    "operationId": "validate_risk",
+                    "security": [
+                        {"ApiKeyAuth": []},
+                        {"BearerAuth": []}
+                    ],
+                    "requestBody": {
+                        "required": True,
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/RiskValidateRequest"},
+                                "example": {
+                                    "strategy_id": "momentum_v1",
+                                    "metrics": {
+                                        "sharpe_ratio": 1.5,
+                                        "sortino_ratio": 1.8,
+                                        "max_drawdown": 0.15,
+                                        "var_95": -0.03,
+                                        "var_99": -0.06,
+                                        "calmar_ratio": 0.8,
+                                        "volatility": 0.25
+                                    },
+                                    "thresholds": {
+                                        "min_sharpe": 1.0,
+                                        "max_drawdown": 0.20
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Risk validation completed",
+                            "content": {
+                                "application/json": {
+                                    "schema": {"$ref": "#/components/schemas/CanonicalEnvelope"}
+                                }
+                            }
+                        },
+                        "401": {"$ref": "#/components/responses/Unauthorized"},
+                        "429": {"$ref": "#/components/responses/RateLimitExceeded"}
+                    }
+                }
+            },
+            "/api/primitives/v1/risk/health": {
+                "get": {
+                    "tags": ["risk"],
+                    "summary": "Check risk primitive health",
+                    "operationId": "risk_health",
+                    "responses": {
+                        "200": {
+                            "description": "Primitive is healthy"
+                        }
+                    }
+                }
+            },
+            "/api/primitives/v1/policy/check": {
+                "post": {
+                    "tags": ["policy"],
+                    "summary": "Check policy compliance",
+                    "description": "Validates regulatory rules, business constraints, governance policies, and compliance requirements.",
+                    "operationId": "check_policy",
+                    "security": [
+                        {"ApiKeyAuth": []},
+                        {"BearerAuth": []}
+                    ],
+                    "requestBody": {
+                        "required": True,
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/PolicyCheckRequest"},
+                                "example": {
+                                    "strategy_id": "momentum_v1",
+                                    "context": {
+                                        "max_drawdown": 0.15,
+                                        "max_leverage": 1.5,
+                                        "turnover_rate": 2.5,
+                                        "lineage_complete": True,
+                                        "governance_compliant": True
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Policy check completed",
+                            "content": {
+                                "application/json": {
+                                    "schema": {"$ref": "#/components/schemas/CanonicalEnvelope"}
+                                }
+                            }
+                        },
+                        "401": {"$ref": "#/components/responses/Unauthorized"},
+                        "429": {"$ref": "#/components/responses/RateLimitExceeded"}
+                    }
+                }
+            },
+            "/api/primitives/v1/policy/health": {
+                "get": {
+                    "tags": ["policy"],
+                    "summary": "Check policy primitive health",
+                    "operationId": "policy_health",
+                    "responses": {
+                        "200": {
+                            "description": "Primitive is healthy"
+                        }
+                    }
+                }
             }
         },
         "components": {
@@ -525,6 +639,118 @@ def generate_primitives_openapi_spec() -> Dict[str, Any]:
                         "enabled": {"type": "boolean", "default": true}
                     },
                     "required": ["gate_id", "name", "checks"]
+                },
+                "RiskValidateRequest": {
+                    "type": "object",
+                    "description": "Request for risk validation",
+                    "properties": {
+                        "strategy_id": {"type": "string", "example": "momentum_v1"},
+                        "metrics": {
+                            "type": "object",
+                            "description": "Risk metrics to validate",
+                            "properties": {
+                                "sharpe_ratio": {"type": "number", "format": "float"},
+                                "sortino_ratio": {"type": "number", "format": "float"},
+                                "max_drawdown": {"type": "number", "format": "float"},
+                                "var_95": {"type": "number", "format": "float"},
+                                "var_99": {"type": "number", "format": "float"},
+                                "calmar_ratio": {"type": "number", "format": "float"},
+                                "volatility": {"type": "number", "format": "float"}
+                            }
+                        },
+                        "thresholds": {
+                            "type": "object",
+                            "description": "Custom thresholds",
+                            "properties": {
+                                "min_sharpe": {"type": "number", "format": "float", "default": 1.0},
+                                "min_sortino": {"type": "number", "format": "float", "default": 1.2},
+                                "max_drawdown": {"type": "number", "format": "float", "default": 0.20},
+                                "max_var_95": {"type": "number", "format": "float", "default": -0.05},
+                                "max_var_99": {"type": "number", "format": "float", "default": -0.10},
+                                "min_calmar": {"type": "number", "format": "float", "default": 0.5},
+                                "max_volatility": {"type": "number", "format": "float", "default": 0.30}
+                            }
+                        }
+                    },
+                    "required": ["strategy_id", "metrics"]
+                },
+                "RiskValidateResponse": {
+                    "type": "object",
+                    "description": "Risk validation result",
+                    "properties": {
+                        "strategy_id": {"type": "string"},
+                        "passed": {"type": "boolean"},
+                        "risk_score": {"type": "number", "format": "float", "description": "Overall risk score (0-100)"},
+                        "checks": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "check_name": {"type": "string"},
+                                    "passed": {"type": "boolean"},
+                                    "description": {"type": "string"},
+                                    "actual_value": {"type": "number"},
+                                    "threshold_value": {"type": "number"},
+                                    "severity": {"type": "string", "enum": ["error", "warning", "info"]}
+                                }
+                            }
+                        },
+                        "recommendations": {"type": "array", "items": {"type": "string"}},
+                        "summary": {"type": "string"}
+                    },
+                    "required": ["strategy_id", "passed", "risk_score", "checks"]
+                },
+                "PolicyCheckRequest": {
+                    "type": "object",
+                    "description": "Request for policy checking",
+                    "properties": {
+                        "strategy_id": {"type": "string", "example": "momentum_v1"},
+                        "context": {
+                            "type": "object",
+                            "description": "Context data for policy evaluation",
+                            "additionalProperties": True
+                        },
+                        "rules": {
+                            "type": "array",
+                            "description": "Custom policy rules",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "rule_id": {"type": "string"},
+                                    "rule_type": {"type": "string", "enum": ["regulatory", "business", "governance", "compliance"]},
+                                    "description": {"type": "string"},
+                                    "severity": {"type": "string", "enum": ["error", "warning", "info"], "default": "error"}
+                                }
+                            }
+                        }
+                    },
+                    "required": ["strategy_id", "context"]
+                },
+                "PolicyCheckResponse": {
+                    "type": "object",
+                    "description": "Policy compliance result",
+                    "properties": {
+                        "strategy_id": {"type": "string"},
+                        "passed": {"type": "boolean"},
+                        "compliance_score": {"type": "number", "format": "float", "description": "Overall compliance score (0-100)"},
+                        "checks": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "rule_id": {"type": "string"},
+                                    "passed": {"type": "boolean"},
+                                    "message": {"type": "string"},
+                                    "severity": {"type": "string"},
+                                    "recommendation": {"type": "string"}
+                                }
+                            }
+                        },
+                        "blockers": {"type": "array", "items": {"type": "string"}, "description": "Critical policy violations"},
+                        "warnings": {"type": "array", "items": {"type": "string"}, "description": "Non-critical warnings"},
+                        "summary": {"type": "string"}
+                    },
+                    "required": ["strategy_id", "passed", "compliance_score", "checks", "blockers", "warnings"]
                 }
             },
             "securitySchemes": {
