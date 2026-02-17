@@ -37,7 +37,11 @@ router.include_router(risk_router)
 from .policy import router as policy_router
 router.include_router(policy_router)
 
-# from .strategy import router as strategy_router
+from .strategy import router as strategy_router
+router.include_router(strategy_router)
+
+from .evidence import router as evidence_router
+router.include_router(evidence_router)
 # from .evidence import router as evidence_router
 # from .reflexion import router as reflexion_router
 # from .orchestrator import router as orchestrator_router
